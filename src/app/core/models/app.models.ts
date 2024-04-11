@@ -3,7 +3,7 @@ export interface Event {
     image: string;
     title: string;
     description: string;
-    domain: Domain; // foreign key
+    domainId: string;
     location: string;
     date: string;
     startTime: string;

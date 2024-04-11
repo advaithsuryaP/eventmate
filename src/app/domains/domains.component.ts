@@ -34,6 +34,7 @@ export default class DomainsComponent implements OnInit, OnDestroy {
     readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
     domainForm = new FormGroup({
+        icon: new FormControl<string>('', { nonNullable: true }),
         name: new FormControl<string>('', { nonNullable: true }),
         description: new FormControl<string>('', { nonNullable: true }),
         interests: new FormControl<string[]>([], { nonNullable: true }),
