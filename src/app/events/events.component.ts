@@ -11,7 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { Domain, Event } from '../core/models/app.models';
-import { Subject, switchMap, takeUntil } from 'rxjs';
+import { Subject, combineLatest, switchMap, takeUntil } from 'rxjs';
 import { EventsService } from '../core/services/events.service';
 import { DomainsService } from '../core/services/domains.service';
 import { Router } from '@angular/router';
@@ -44,17 +44,12 @@ export default class EventsComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<null> = new Subject();
 
     ngOnInit(): void {
-        this._domainsService.domainsObs$
-            .pipe(
-                switchMap(response => {
-                    this.domains = response;
-                    return this._eventsService.getEvents();
-                }),
-                takeUntil(this._unsubscribeAll)
-            )
+        combineLatest([this._domainsService.domainsObs$, this._eventsService.getEvents()])
+            .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
-                next: response => {
-                    this.events = response;
+                next: ([domains, events]) => {
+                    this.domains = domains;
+                    this.events = events;
                 }
             });
     }
