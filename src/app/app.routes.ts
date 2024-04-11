@@ -15,6 +15,10 @@ export const routes: Routes = [
         resolve: { domains: domainResolver }
     },
     {
+        path: 'auth',
+        loadChildren: () => import('./auth/auth.routes')
+    },
+    {
         path: 'domains',
         loadComponent: () => import('./domains/domains.component'),
         resolve: { domains: domainResolver }

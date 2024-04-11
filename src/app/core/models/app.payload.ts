@@ -1,3 +1,14 @@
+export interface CreateUserPayload {
+    email: string;
+    username: string;
+    password: string;
+}
+
+export interface LoginUserPayload {
+    username: string;
+    password: string;
+}
+
 export interface CreateDomainPayload {
     icon: string;
     name: string;
@@ -10,7 +21,7 @@ export interface CreateEventPayload {
     image: string;
     title: string;
     description: string;
-    domainId: string; // foreign key
+    domainId: string;
     location: string;
     date: string;
     startTime: string;

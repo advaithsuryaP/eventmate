@@ -1,21 +1,19 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Subject, switchMap, takeUntil, withLatestFrom } from 'rxjs';
 import { EventsService } from '../core/services/events.service';
-import { ActivatedRoute } from '@angular/router';
+import { ActivatedRoute, RouterLink } from '@angular/router';
 import { Domain, Event } from '../core/models/app.models';
 import { DomainsService } from '../core/services/domains.service';
 
 import { MatListModule, MatListOption } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
-import {} from '@angular/material';
-import {} from '@angular/material';
 import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 
 @Component({
     selector: 'app-register',
     standalone: true,
-    imports: [NgIf, NgFor, MatListModule, MatCardModule, DatePipe, MatButtonModule],
+    imports: [NgIf, NgFor, MatListModule, MatCardModule, DatePipe, MatButtonModule, RouterLink],
     templateUrl: './register.component.html',
     styleUrl: './register.component.css'
 })
@@ -40,8 +38,6 @@ export default class RegisterComponent implements OnInit, OnDestroy {
             )
             .subscribe({
                 next: ([event, domains]) => {
-                    console.log(domains);
-
                     this.event = event;
                     this.domains = domains;
                 }
@@ -62,5 +58,8 @@ export default class RegisterComponent implements OnInit, OnDestroy {
         console.log(interests);
     }
 
-    ngOnDestroy(): void {}
+    ngOnDestroy(): void {
+        this._unsubscribeAll.next(null);
+        this._unsubscribeAll.complete();
+    }
 }
