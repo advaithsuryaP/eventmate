@@ -17,6 +17,12 @@ export class EventsService {
             .pipe(map(response => response.data));
     }
 
+    getEvent(eventId: string): Observable<Event> {
+        return this._http
+            .get<{ message: string; data: Event }>(`${API_URL_MAP.EVENT}/${eventId}`)
+            .pipe(map(response => response.data));
+    }
+
     createEvent(payload: CreateEventPayload): Observable<Event> {
         return this._http
             .post<{ message: string; data: Event }>(API_URL_MAP.EVENTS, payload)

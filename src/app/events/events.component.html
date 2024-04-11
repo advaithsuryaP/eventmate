@@ -16,7 +16,7 @@
                     <p><strong>Attendees:</strong> {{ event.attendees.length }}</p>
                 </mat-card-content>
                 <mat-card-actions>
-                    <button mat-raised-button color="primary" (click)="registerEvent()">Register</button>
+                    <button mat-raised-button color="primary" (click)="registerEvent(event._id)">Register</button>
                 </mat-card-actions>
             </mat-card>
         </div>

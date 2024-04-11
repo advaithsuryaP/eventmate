@@ -11,9 +11,10 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { Domain, Event } from '../core/models/app.models';
-import { Subject, switchMap } from 'rxjs';
+import { Subject, switchMap, takeUntil } from 'rxjs';
 import { EventsService } from '../core/services/events.service';
 import { DomainsService } from '../core/services/domains.service';
+import { Router } from '@angular/router';
 
 @Component({
     selector: 'app-events',
@@ -35,19 +36,21 @@ import { DomainsService } from '../core/services/domains.service';
 export default class EventsComponent implements OnInit, OnDestroy {
     events: Event[] = [];
     domains: Domain[] = [];
-    private _unsubscribeAll: Subject<null> = new Subject();
 
+    private _router = inject(Router);
     private _eventsService = inject(EventsService);
     private _domainsService = inject(DomainsService);
 
+    private _unsubscribeAll: Subject<null> = new Subject();
+
     ngOnInit(): void {
-        this._domainsService
-            .getDomains()
+        this._domainsService.domainsObs$
             .pipe(
                 switchMap(response => {
                     this.domains = response;
                     return this._eventsService.getEvents();
-                })
+                }),
+                takeUntil(this._unsubscribeAll)
             )
             .subscribe({
                 next: response => {
@@ -56,7 +59,7 @@ export default class EventsComponent implements OnInit, OnDestroy {
             });
     }
 
-    getDomainNameById(id: string) {
+    getDomainNameById(id: string): string {
         return this.domains.find(d => d._id === id)?.name ?? 'Unknown Domain';
     }
 
@@ -72,7 +75,9 @@ export default class EventsComponent implements OnInit, OnDestroy {
         return true;
     }
 
-    registerEvent() {}
+    registerEvent(eventId: string) {
+        this._router.navigate([`/register/${eventId}`]);
+    }
 
     ngOnDestroy(): void {
         this._unsubscribeAll.next(null);

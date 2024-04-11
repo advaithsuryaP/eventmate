@@ -45,7 +45,6 @@ export default class DomainsComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<null> = new Subject();
 
     ngOnInit(): void {
-        this._domainsService.getDomains().subscribe();
         this._domainsService.domainsObs$.pipe(takeUntil(this._unsubscribeAll)).subscribe({
             next: response => {
                 this.domains = response;
@@ -53,21 +52,7 @@ export default class DomainsComponent implements OnInit, OnDestroy {
         });
     }
 
-    createDomain() {
-        // this._domainsService
-        //     .createDomain({
-        //         icon: 'perm_media',
-        //         name: 'Art',
-        //         description: 'Art exhibitions, galleries, and cultural events showcasing visual arts.',
-        //         interests: ['Painting', 'Sculpture', 'Photography', 'Film', 'Music', 'Design'],
-        //         rank: 3
-        //     })
-        //     .subscribe({
-        //         next: response => {
-        //             console.log(response);
-        //         }
-        //     });
-    }
+    createDomain() {}
 
     editDomain(domainId: string) {}
 
