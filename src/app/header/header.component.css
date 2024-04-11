@@ -1,0 +1,17 @@
+.ms-flex {
+    margin-left: auto;
+}
+
+.ms-2 {
+    margin-left: 8px;
+}
+
+@media (max-width: 991px) {
+    .ms-auto {
+        margin: 0 auto;
+    }
+
+    .flex-grow-1 {
+        flex: 1 0 auto;
+    }
+}
