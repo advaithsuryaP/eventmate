@@ -1,0 +1,53 @@
+<div class="container my-4">
+    <div class="row">
+        <div class="col-md-4">
+            <h2 class="mb-4">Create Domain</h2>
+            <form [formGroup]="domainForm">
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>Name</mat-label>
+                    <input matInput formControlName="name" />
+                </mat-form-field>
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>Description</mat-label>
+                    <textarea matInput formControlName="description"></textarea>
+                </mat-form-field>
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>Interests</mat-label>
+                    <mat-chip-grid #chipList>
+                        <mat-chip-row
+                            *ngFor="let interest of domainForm.value.interests; let i = index"
+                            [editable]="true"
+                            [removable]="true"
+                            (removed)="removeInterest(interest)">
+                            {{ interest }}
+                            <mat-icon matChipRemove>cancel</mat-icon>
+                        </mat-chip-row>
+                        <input
+                            placeholder="Add interest..."
+                            [matChipInputFor]="chipList"
+                            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                            [matChipInputAddOnBlur]="true"
+                            (matChipInputTokenEnd)="addInterest($event)" />
+                    </mat-chip-grid>
+                </mat-form-field>
+                <mat-form-field class="w-100" appearance="outline">
+                    <mat-label>Rank</mat-label>
+                    <input matInput type="number" formControlName="rank" />
+                </mat-form-field>
+                <button mat-raised-button type="submit" color="primary" (click)="createDomain()">Create</button>
+            </form>
+        </div>
+        <div class="col-md-8">
+            <h2 class="mb-4">Domains</h2>
+            <mat-list>
+                @for (domain of domains; track domain) {
+                <mat-list-item>
+                    <mat-icon matListItemIcon>{{ domain.icon }}</mat-icon>
+                    <div matListItemTitle>{{ domain.name }}</div>
+                    <div matListItemLine>{{ domain.description }}</div>
+                </mat-list-item>
+                }
+            </mat-list>
+        </div>
+    </div>
+</div>
