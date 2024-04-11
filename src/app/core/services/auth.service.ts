@@ -10,7 +10,7 @@ export class AuthService {
     private _http = inject(HttpClient);
 
     signInUser(payload: LoginUserPayload) {
-        return this._http.post(API_URL_MAP.REGISTER_USER, payload);
+        return this._http.post(API_URL_MAP.LOGIN_USER, payload);
     }
 
     registerUser(payload: CreateUserPayload) {

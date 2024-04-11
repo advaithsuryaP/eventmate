@@ -19,12 +19,16 @@ export default class SignInComponent {
     private _authService = inject(AuthService);
 
     signInForm = new FormGroup({
-        username: new FormControl('', { nonNullable: true }),
+        email: new FormControl('', { nonNullable: true }),
         password: new FormControl('', { nonNullable: true })
     });
 
     signIn() {
         const payload: LoginUserPayload = this.signInForm.getRawValue();
-        this._authService.signInUser(payload);
+        this._authService.signInUser(payload).subscribe({
+            next: response => {
+                console.log(response);
+            }
+        });
     }
 }
