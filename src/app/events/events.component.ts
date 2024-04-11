@@ -11,8 +11,8 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { Event } from '../core/models/app.models';
-import { HttpService } from '../core/services/http.service';
 import { Subject } from 'rxjs';
+import { EventsService } from '../core/services/events.service';
 
 @Component({
     selector: 'app-events',
@@ -31,13 +31,13 @@ import { Subject } from 'rxjs';
     templateUrl: './events.component.html',
     styleUrl: './events.component.css'
 })
-export class EventsComponent implements OnInit, OnDestroy {
+export default class EventsComponent implements OnInit, OnDestroy {
     events: Event[] = [];
     private _unsubscribeAll: Subject<null> = new Subject();
-    private _httpService = inject(HttpService);
+    private _eventsService = inject(EventsService);
 
     ngOnInit(): void {
-        this._httpService.getEvents().subscribe({
+        this._eventsService.getEvents().subscribe({
             next: response => {
                 this.events = response;
             }
