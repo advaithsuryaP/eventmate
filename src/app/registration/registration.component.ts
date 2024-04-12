@@ -1,9 +1,7 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Subject, combineLatest, switchMap, takeUntil } from 'rxjs';
-import { EventsService } from '../core/services/events.service';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { CurrentUser, Domain, Event } from '../core/models/app.models';
-import { DomainsService } from '../core/services/domains.service';
 
 import { MatListModule, MatListOption } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
@@ -11,24 +9,26 @@ import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { RegisterEventPayload } from '../core/models/app.payload';
 import { AuthService } from '../core/services/auth.service';
-import { RegisterService } from '../core/services/register.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
+import { EventService } from '../events/event.service';
+import { DomainService } from '../domains/domain.service';
+import { RegistrationService } from './registration.service';
 
 @Component({
-    selector: 'app-register',
+    selector: 'app-registration',
     standalone: true,
     imports: [NgIf, NgFor, MatListModule, MatCardModule, DatePipe, MatButtonModule, RouterLink],
-    templateUrl: './register.component.html',
-    styleUrl: './register.component.css'
+    templateUrl: './registration.component.html',
+    styleUrl: './registration.component.css'
 })
-export default class RegisterComponent implements OnInit, OnDestroy {
+export default class RegistrationComponent implements OnInit, OnDestroy {
     isLoading: boolean = false;
     private _route = inject(ActivatedRoute);
     private _authService = inject(AuthService);
-    private _eventsService = inject(EventsService);
+    private _eventService = inject(EventService);
     private _snackbarService = inject(MatSnackBar);
-    private _domainsService = inject(DomainsService);
-    private _registerService = inject(RegisterService);
+    private _domainService = inject(DomainService);
+    private _registrationService = inject(RegistrationService);
 
     event!: Event;
     domains: Domain[] = [];
@@ -43,8 +43,8 @@ export default class RegisterComponent implements OnInit, OnDestroy {
                     const eventId: string = paramMap.get('eventId') ?? '';
                     return combineLatest([
                         this._authService.currentUserObs$,
-                        this._domainsService.domainsObs$,
-                        this._eventsService.getEvent(eventId)
+                        this._domainService.domainsObs$,
+                        this._eventService.getEvent(eventId)
                     ]);
                 }),
                 takeUntil(this._unsubscribeAll)
@@ -76,7 +76,7 @@ export default class RegisterComponent implements OnInit, OnDestroy {
             interests: interests,
             domainId: this.event.domainId
         };
-        this._registerService.registerEvent(payload).subscribe({
+        this._registrationService.registerEvent(payload).subscribe({
             next: response => {
                 this._snackbarService.open(response, 'SUCCESS', { duration: 3000 });
             }

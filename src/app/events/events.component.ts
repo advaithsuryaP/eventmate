@@ -12,10 +12,10 @@ import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { CurrentUser, Domain, Event } from '../core/models/app.models';
 import { Subject, combineLatest, takeUntil } from 'rxjs';
-import { EventsService } from '../core/services/events.service';
-import { DomainsService } from '../core/services/domains.service';
 import { Router } from '@angular/router';
 import { AuthService } from '../core/services/auth.service';
+import { EventService } from './event.service';
+import { DomainService } from '../domains/domain.service';
 
 @Component({
     selector: 'app-events',
@@ -42,16 +42,16 @@ export default class EventsComponent implements OnInit, OnDestroy {
 
     private _router = inject(Router);
     private _authService = inject(AuthService);
-    private _eventsService = inject(EventsService);
-    private _domainsService = inject(DomainsService);
+    private _eventService = inject(EventService);
+    private _domainService = inject(DomainService);
 
     private _unsubscribeAll: Subject<null> = new Subject();
 
     ngOnInit(): void {
         combineLatest([
             this._authService.currentUserObs$,
-            this._domainsService.domainsObs$,
-            this._eventsService.getEvents()
+            this._domainService.domainsObs$,
+            this._eventService.getEvents()
         ])
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({

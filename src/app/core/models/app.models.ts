@@ -29,7 +29,7 @@ export interface Domain {
     rank: number;
 }
 
-export interface Register {
+export interface Registration {
     _id: string;
     userId: string;
     eventId: string;

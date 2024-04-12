@@ -1,14 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, map, tap } from 'rxjs';
-import { Domain } from '../models/app.models';
-import { API_URL_MAP } from '../constants/app.constants';
-import { CreateDomainPayload } from '../models/app.payload';
+import { API_URL_MAP } from '../core/constants/app.constants';
+import { Domain } from '../core/models/app.models';
+import { CreateDomainPayload } from '../core/models/app.payload';
 
 @Injectable({
     providedIn: 'root'
 })
-export class DomainsService {
+export class DomainService {
     private _domainsSubject = new BehaviorSubject<Domain[]>([]);
     domainsObs$ = this._domainsSubject.asObservable();
 

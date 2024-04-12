@@ -1,14 +1,14 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { API_URL_MAP } from '../constants/app.constants';
-import { Event } from '../models/app.models';
-import { CreateEventPayload } from '../models/app.payload';
+import { API_URL_MAP } from '../core/constants/app.constants';
+import { CreateEventPayload } from '../core/models/app.payload';
+import { Event } from '../core/models/app.models';
 
 @Injectable({
     providedIn: 'root'
 })
-export class EventsService {
+export class EventService {
     private _http = inject(HttpClient);
 
     getEvents(): Observable<Event[]> {

@@ -1,11 +1,11 @@
 import { ActivatedRouteSnapshot, ResolveFn, RouterStateSnapshot, Routes } from '@angular/router';
 import { Domain } from './core/models/app.models';
 import { inject } from '@angular/core';
-import { DomainsService } from './core/services/domains.service';
 import { authGuard } from './core/services/auth.guard';
+import { DomainService } from './domains/domain.service';
 
 export const domainResolver: ResolveFn<Domain[]> = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
-    return inject(DomainsService).getDomains();
+    return inject(DomainService).getDomains();
 };
 
 export const routes: Routes = [
@@ -26,7 +26,7 @@ export const routes: Routes = [
     },
     {
         path: 'register/:eventId',
-        loadComponent: () => import('./register/register.component'),
+        loadComponent: () => import('./registration/registration.component'),
         canActivate: [authGuard]
     }
 ];

@@ -9,8 +9,8 @@ import { MatIconModule } from '@angular/material/icon';
 import { Domain } from '../core/models/app.models';
 import { NgFor } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
-import { DomainsService } from '../core/services/domains.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { DomainService } from './domain.service';
 
 @Component({
     selector: 'app-domains',
@@ -40,11 +40,11 @@ export default class DomainsComponent implements OnInit, OnDestroy {
         rank: new FormControl<number>(1, { nonNullable: true })
     });
 
-    private _domainsService = inject(DomainsService);
+    private _domainService = inject(DomainService);
     private _unsubscribeAll: Subject<null> = new Subject();
 
     ngOnInit(): void {
-        this._domainsService.domainsObs$.pipe(takeUntil(this._unsubscribeAll)).subscribe({
+        this._domainService.domainsObs$.pipe(takeUntil(this._unsubscribeAll)).subscribe({
             next: response => {
                 this.domains = response;
             }
