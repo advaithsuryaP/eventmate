@@ -24,7 +24,7 @@ export class AuthService {
     }
 
     signInUser(payload: LoginUserPayload) {
-        return this._http.post<{ message: string; data: CurrentUser }>(API_URL_MAP.LOGIN_USER, payload).subscribe({
+        return this._http.post<{ message: string; data: CurrentUser }>(API_URL_MAP.SIGNIN_USER, payload).subscribe({
             next: response => {
                 this._token = response.data.token;
                 this._currentUserSubject.next(response.data);
@@ -96,7 +96,7 @@ export class AuthService {
     }
 
     registerUser(payload: CreateUserPayload) {
-        return this._http.post<{ message: string; data: string }>(API_URL_MAP.REGISTER_USER, payload).subscribe({
+        return this._http.post<{ message: string; data: string }>(API_URL_MAP.SIGNUP_USER, payload).subscribe({
             next: _ => {
                 this._router.navigate(['/auth']);
             }

@@ -1,4 +1,4 @@
-<h2>Register</h2>
+<h2>Sign Up</h2>
 <form [formGroup]="registerForm" class="d-flex flex-column">
     <mat-form-field appearance="outline">
         <mat-label>Username</mat-label>
@@ -13,7 +13,7 @@
         <input matInput type="password" name="password" formControlName="password" />
     </mat-form-field>
     <div class="d-flex justify-content-between align-items-center">
-        <button mat-raised-button color="primary" type="submit" (click)="register()">Register</button>
+        <button mat-raised-button color="primary" type="submit" (click)="register()">Sign Up</button>
         <button type="button" mat-stroked-button routerLink="/auth">Sign In</button>
     </div>
 </form>

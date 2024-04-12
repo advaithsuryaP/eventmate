@@ -11,8 +11,8 @@ export default [
                 loadComponent: () => import('./sign-in/sign-in.component')
             },
             {
-                path: 'register',
-                loadComponent: () => import('./register/register.component')
+                path: 'sign-up',
+                loadComponent: () => import('./sign-up/sign-up.component')
             }
         ]
     }

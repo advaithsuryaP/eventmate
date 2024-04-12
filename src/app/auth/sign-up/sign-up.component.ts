@@ -4,17 +4,18 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { CreateUserPayload } from '../../core/models/app.payload';
 import { AuthService } from '../../core/services/auth.service';
 
 @Component({
+    selector: 'app-sign-up',
     standalone: true,
     imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, RouterLink],
-    templateUrl: './register.component.html',
-    styleUrl: './register.component.css'
+    templateUrl: './sign-up.component.html',
+    styleUrl: './sign-up.component.css'
 })
-export default class RegisterComponent {
+export default class SignUpComponent {
     private _authService = inject(AuthService);
 
     registerForm = new FormGroup({
