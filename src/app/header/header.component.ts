@@ -8,7 +8,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { Subject, takeUntil } from 'rxjs';
-import { CurrentUser } from '../core/app.models';
+import { User } from '../core/app.models';
 
 @Component({
     selector: 'app-header',
@@ -19,7 +19,7 @@ import { CurrentUser } from '../core/app.models';
 })
 export class HeaderComponent implements OnInit, OnDestroy {
     private _authService = inject(AuthService);
-    currentUser!: CurrentUser | null;
+    currentUser: User | null = null;
 
     private _unsubscribeAll: Subject<null> = new Subject();
 
@@ -31,7 +31,9 @@ export class HeaderComponent implements OnInit, OnDestroy {
         });
     }
 
-    onSignout(): void {}
+    onSignout(): void {
+        this._authService.signOutUser();
+    }
 
     ngOnDestroy(): void {
         this._unsubscribeAll.next(null);

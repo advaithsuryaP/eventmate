@@ -11,6 +11,7 @@ import { NgFor } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
 import { DomainService } from './domain.service';
+import { CreateDomainPayload } from '../core/app.payload';
 
 @Component({
     selector: 'app-domains',
@@ -51,7 +52,12 @@ export default class DomainsComponent implements OnInit, OnDestroy {
         });
     }
 
-    createDomain() {}
+    createDomain(): void {
+        if (this.domainForm.valid) {
+            const payload: CreateDomainPayload = this.domainForm.getRawValue();
+        }
+        // this._domainService.createDomain()
+    }
 
     editDomain(domainId: string) {}
 

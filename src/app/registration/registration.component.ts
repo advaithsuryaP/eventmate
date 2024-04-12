@@ -1,7 +1,7 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Subject, combineLatest, switchMap, takeUntil } from 'rxjs';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { CurrentUser, Domain, Event } from '../core/app.models';
+import { User, Domain, Event } from '../core/app.models';
 
 import { MatListModule, MatListOption } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
@@ -13,6 +13,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { EventService } from '../events/event.service';
 import { DomainService } from '../domains/domain.service';
 import { RegistrationService } from './registration.service';
+import { SNACKBAR_ACTION } from '../core/app.constants';
 
 @Component({
     selector: 'app-registration',
@@ -32,7 +33,7 @@ export default class RegistrationComponent implements OnInit, OnDestroy {
 
     event!: Event;
     domains: Domain[] = [];
-    currentUser: CurrentUser | null = null;
+    currentUser: User | null = null;
 
     private _unsubscribeAll: Subject<null> = new Subject();
     ngOnInit(): void {
@@ -71,14 +72,14 @@ export default class RegistrationComponent implements OnInit, OnDestroy {
         const interests: string[] = [];
         selectedOptions.forEach(option => interests.push(option.value));
         const payload: RegisterEventPayload = {
-            userId: this.currentUser!.userId,
+            userId: this.currentUser!._id,
             eventId: this.event._id,
             interests: interests,
             domainId: this.event.domainId
         };
         this._registrationService.registerEvent(payload).subscribe({
             next: response => {
-                this._snackbarService.open(response, 'SUCCESS', { duration: 3000 });
+                this._snackbarService.open(response, SNACKBAR_ACTION.SUCCESS, { duration: 3000 });
             }
         });
     }

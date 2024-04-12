@@ -2,6 +2,7 @@ import { HttpErrorResponse, HttpInterceptorFn } from '@angular/common/http';
 import { inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, throwError } from 'rxjs';
+import { SNACKBAR_ACTION } from '../app.constants';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
     const snackbarService = inject(MatSnackBar);
@@ -13,7 +14,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             } else if (error.error.message) {
                 errorMessage = error.error.message;
             }
-            snackbarService.open(errorMessage, 'ERROR');
+            snackbarService.open(errorMessage, SNACKBAR_ACTION.ERROR);
             return throwError(() => error);
         })
     );

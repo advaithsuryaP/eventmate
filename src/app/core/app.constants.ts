@@ -7,3 +7,15 @@ export const API_URL_MAP = {
     SIGNUP_USER: `${environment.API_URL}/users/signup`,
     REGISTER_EVENT: `${environment.API_URL}/register`
 };
+
+export const SNACKBAR_ACTION = {
+    SUCCESS: 'SUCCESS',
+    WARNING: 'WARNING',
+    ERROR: 'ERROR'
+};
+
+export const STORAGE_KEY_MAP = {
+    TOKEN: 'token',
+    CURRENT_USER: 'currentUser',
+    TOKEN_VALID_UNTIL: 'tokenValidUntil'
+};

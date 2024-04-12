@@ -10,7 +10,7 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
-import { CurrentUser, Domain, Event } from '../core/app.models';
+import { User, Domain, Event } from '../core/app.models';
 import { Subject, combineLatest, takeUntil } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
@@ -38,7 +38,7 @@ export default class EventsComponent implements OnInit, OnDestroy {
     events: Event[] = [];
     domains: Domain[] = [];
 
-    currentUser!: CurrentUser | null;
+    currentUser!: User | null;
 
     private _router = inject(Router);
     private _authService = inject(AuthService);

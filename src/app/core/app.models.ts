@@ -1,10 +1,11 @@
-export interface CurrentUser {
-    userId: string;
+export interface User {
+    _id: string;
     email: string;
     username: string;
     events: string[];
-    token: string;
-    expiresIn: number;
+    isAdmin: boolean;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface Event {

@@ -1,12 +1,14 @@
 import { Component, inject } from '@angular/core';
-import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { RouterLink } from '@angular/router';
-import { LoginUserPayload } from '../../core/app.payload';
+import { Router, RouterLink } from '@angular/router';
+import { SignInUserPayload } from '../../core/app.payload';
 import { AuthService } from '../auth.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { SNACKBAR_ACTION } from '../../core/app.constants';
 
 @Component({
     standalone: true,
@@ -15,16 +17,35 @@ import { AuthService } from '../auth.service';
     styleUrl: './sign-in.component.css'
 })
 export default class SignInComponent {
+    showPassword: boolean = false;
     isLoading: boolean = false;
+
+    private _router = inject(Router);
+    private _snackbar = inject(MatSnackBar);
     private _authService = inject(AuthService);
 
     signInForm = new FormGroup({
-        email: new FormControl('spandra1@umbc.edu', { nonNullable: true }),
-        password: new FormControl('advaith', { nonNullable: true })
+        email: new FormControl('admin@eventmate.com', {
+            nonNullable: true,
+            validators: [Validators.required, Validators.email]
+        }),
+        password: new FormControl('admin', { nonNullable: true, validators: [Validators.required] })
     });
 
-    signIn() {
-        const payload: LoginUserPayload = this.signInForm.getRawValue();
-        this._authService.signInUser(payload);
+    signIn(): void {
+        if (this.signInForm.valid) {
+            this.isLoading = true;
+            const payload: SignInUserPayload = this.signInForm.getRawValue();
+            this._authService.signInUser(payload).subscribe({
+                next: response => {
+                    this.isLoading = false;
+                    this._snackbar.open(response, SNACKBAR_ACTION.SUCCESS);
+                    // this._router.navigate(['/']);
+                },
+                error: err => {
+                    this.isLoading = false;
+                }
+            });
+        }
     }
 }

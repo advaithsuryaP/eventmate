@@ -1,10 +1,11 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { CreateUserPayload, LoginUserPayload } from '../core/app.payload';
-import { API_URL_MAP } from '../core/app.constants';
-import { BehaviorSubject } from 'rxjs';
+import { SignInUserPayload, SignUpUserPayload } from '../core/app.payload';
+import { API_URL_MAP, SNACKBAR_ACTION, STORAGE_KEY_MAP } from '../core/app.constants';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 import { Router } from '@angular/router';
-import { CurrentUser } from '../core/app.models';
+import { User } from '../core/app.models';
+import { MatSnackBar } from '@angular/material/snack-bar';
 
 @Injectable({
     providedIn: 'root'
@@ -15,32 +16,45 @@ export class AuthService {
 
     private _router = inject(Router);
     private _http = inject(HttpClient);
+    private _snackbar = inject(MatSnackBar);
 
-    private _currentUserSubject = new BehaviorSubject<CurrentUser | null>(null);
+    private _currentUserSubject = new BehaviorSubject<User | null>(null);
     currentUserObs$ = this._currentUserSubject.asObservable();
 
     getToken(): string | null {
         return this._token;
     }
 
-    signInUser(payload: LoginUserPayload) {
-        return this._http.post<{ message: string; data: CurrentUser }>(API_URL_MAP.SIGNIN_USER, payload).subscribe({
-            next: response => {
-                this._token = response.data.token;
-                this._currentUserSubject.next(response.data);
-                const now = new Date();
-                const expirationDate = new Date(now.getTime() + response.data.expiresIn * 1000);
-                this.saveAuthData(response.data.userId, this._token, expirationDate);
-                this.setAuthTimer(response.data.expiresIn);
-                this._router.navigate(['/']);
-            }
-        });
+    signInUser(payload: SignInUserPayload): Observable<string> {
+        return this._http
+            .post<{ message: string; data: User; expiresIn: number; token: string }>(API_URL_MAP.SIGNIN_USER, payload)
+            .pipe(
+                map(response => {
+                    // Populate the token field
+                    this._token = response.token;
+
+                    // Populate the current user subject
+                    this._currentUserSubject.next(response.data);
+
+                    // Store the login information in session storage
+                    sessionStorage.setItem(STORAGE_KEY_MAP.TOKEN, response.token);
+                    sessionStorage.setItem(STORAGE_KEY_MAP.CURRENT_USER, JSON.stringify(response.data));
+
+                    const now = new Date();
+                    const tokenValidUntil: Date = new Date(now.getTime() + response.expiresIn * 1000);
+                    sessionStorage.setItem(STORAGE_KEY_MAP.TOKEN_VALID_UNTIL, tokenValidUntil.toISOString());
+
+                    // Set Auth-timer for auto-logout
+                    this.setAuthTimer(response.expiresIn);
+
+                    return response.message;
+                })
+            );
     }
 
     private setAuthTimer(duration: number) {
-        console.log('Setting timer: ', +duration);
-
         this.tokenTimer = setTimeout(() => {
+            this._snackbar.open('Your session has expired. Please log in again to continue.', SNACKBAR_ACTION.WARNING);
             this.signOutUser();
         }, duration * 1000);
     }
@@ -48,15 +62,26 @@ export class AuthService {
     autoSignIn(): void {
         const authData = this.getAuthData();
         if (authData) {
+            /**
+             * Calculate the time difference between now and the `tokenValidUntil` time
+             * If the time difference is more than 0, ie.. token expiry is in the future, ie.. token is stll valid
+             *
+             */
             const now = new Date();
-            const expiresIn = authData.expiration.getTime() - now.getTime();
-            if (expiresIn > 0) {
+            const tokenExpiresIn = authData.tokenValidUntil.getTime() - now.getTime();
+            if (tokenExpiresIn > 0) {
+                /**
+                 * Mimick the sign-in experience by updating the in-house
+                 * `token` and current user information from session storage
+                 */
                 this._token = authData.token;
-                this.setAuthTimer(expiresIn / 1000);
-                // this._currentUserSubject.next({
-                //     userId: authData.userId,
+                this._currentUserSubject.next(authData.currentUser);
 
-                // })
+                /**
+                 * Reset the auth timer with new tokenExpiresIn to
+                 * recalculate when to log the user out.
+                 */
+                this.setAuthTimer(tokenExpiresIn / 1000);
             }
         }
     }
@@ -69,37 +94,28 @@ export class AuthService {
         this._router.navigate(['/auth']);
     }
 
-    private saveAuthData(userId: string, token: string, expiration: Date): void {
-        localStorage.setItem('userId', userId);
-        localStorage.setItem('token', token);
-        localStorage.setItem('expiration', expiration.toISOString());
-    }
-
     private clearAuthData(): void {
-        localStorage.removeItem('userId');
-        localStorage.removeItem('token');
-        localStorage.removeItem('expiration');
+        sessionStorage.removeItem(STORAGE_KEY_MAP.TOKEN);
+        sessionStorage.removeItem(STORAGE_KEY_MAP.CURRENT_USER);
+        sessionStorage.removeItem(STORAGE_KEY_MAP.TOKEN_VALID_UNTIL);
     }
 
-    private getAuthData(): void | { userId: string; token: string; expiration: Date } {
-        const userId = localStorage.getItem('userId');
-        const token = localStorage.getItem('token');
-        const expiration = localStorage.getItem('expiration');
-        if (!token || !expiration || !userId) {
-            return;
-        }
+    private getAuthData(): null | { token: string; currentUser: User; tokenValidUntil: Date } {
+        const token = sessionStorage.getItem(STORAGE_KEY_MAP.TOKEN);
+        const currentUser = sessionStorage.getItem(STORAGE_KEY_MAP.CURRENT_USER);
+        const tokenValidUntil = sessionStorage.getItem(STORAGE_KEY_MAP.TOKEN_VALID_UNTIL);
+        if (!token || !currentUser || !tokenValidUntil) return null;
+
         return {
             token: token,
-            userId: userId,
-            expiration: new Date(expiration)
+            currentUser: JSON.parse(currentUser),
+            tokenValidUntil: new Date(tokenValidUntil)
         };
     }
 
-    registerUser(payload: CreateUserPayload) {
-        return this._http.post<{ message: string; data: string }>(API_URL_MAP.SIGNUP_USER, payload).subscribe({
-            next: _ => {
-                this._router.navigate(['/auth']);
-            }
-        });
+    signUpUser(payload: SignUpUserPayload): Observable<string> {
+        return this._http
+            .post<{ message: string }>(API_URL_MAP.SIGNUP_USER, payload)
+            .pipe(map(response => response.message));
     }
 }
