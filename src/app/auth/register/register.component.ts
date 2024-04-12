@@ -15,7 +15,6 @@ import { AuthService } from '../../core/services/auth.service';
     styleUrl: './register.component.css'
 })
 export default class RegisterComponent {
-    private _router = inject(Router);
     private _authService = inject(AuthService);
 
     registerForm = new FormGroup({
@@ -26,10 +25,6 @@ export default class RegisterComponent {
 
     register() {
         const payload: CreateUserPayload = this.registerForm.getRawValue();
-        this._authService.registerUser(payload).subscribe({
-            next: response => {
-                this._router.navigate(['/auth']);
-            }
-        });
+        this._authService.registerUser(payload);
     }
 }

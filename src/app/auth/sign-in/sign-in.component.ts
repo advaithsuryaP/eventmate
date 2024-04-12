@@ -4,7 +4,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
-import { Router, RouterLink } from '@angular/router';
+import { RouterLink } from '@angular/router';
 import { LoginUserPayload } from '../../core/models/app.payload';
 import { AuthService } from '../../core/services/auth.service';
 
@@ -15,20 +15,16 @@ import { AuthService } from '../../core/services/auth.service';
     styleUrl: './sign-in.component.css'
 })
 export default class SignInComponent {
-    private _router = inject(Router);
+    isLoading: boolean = false;
     private _authService = inject(AuthService);
 
     signInForm = new FormGroup({
-        email: new FormControl('', { nonNullable: true }),
-        password: new FormControl('', { nonNullable: true })
+        email: new FormControl('spandra1@umbc.edu', { nonNullable: true }),
+        password: new FormControl('advaith', { nonNullable: true })
     });
 
     signIn() {
         const payload: LoginUserPayload = this.signInForm.getRawValue();
-        this._authService.signInUser(payload).subscribe({
-            next: response => {
-                console.log(response);
-            }
-        });
+        this._authService.signInUser(payload);
     }
 }

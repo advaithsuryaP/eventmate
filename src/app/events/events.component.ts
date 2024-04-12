@@ -10,11 +10,12 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
-import { Domain, Event } from '../core/models/app.models';
+import { CurrentUser, Domain, Event } from '../core/models/app.models';
 import { Subject, combineLatest, switchMap, takeUntil } from 'rxjs';
 import { EventsService } from '../core/services/events.service';
 import { DomainsService } from '../core/services/domains.service';
 import { Router } from '@angular/router';
+import { AuthService } from '../core/services/auth.service';
 
 @Component({
     selector: 'app-events',
@@ -37,17 +38,25 @@ export default class EventsComponent implements OnInit, OnDestroy {
     events: Event[] = [];
     domains: Domain[] = [];
 
+    currentUser!: CurrentUser | null;
+
     private _router = inject(Router);
+    private _authService = inject(AuthService);
     private _eventsService = inject(EventsService);
     private _domainsService = inject(DomainsService);
 
     private _unsubscribeAll: Subject<null> = new Subject();
 
     ngOnInit(): void {
-        combineLatest([this._domainsService.domainsObs$, this._eventsService.getEvents()])
+        combineLatest([
+            this._authService.currentUserObs$,
+            this._domainsService.domainsObs$,
+            this._eventsService.getEvents()
+        ])
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
-                next: ([domains, events]) => {
+                next: ([currentUser, domains, events]) => {
+                    this.currentUser = currentUser;
                     this.domains = domains;
                     this.events = events;
                 }

@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { Domain } from '../core/models/app.models';
-import { NgFor, NgIf } from '@angular/common';
+import { NgFor } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { DomainsService } from '../core/services/domains.service';
 import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
@@ -16,7 +16,6 @@ import { FormControl, FormGroup, ReactiveFormsModule } from '@angular/forms';
     selector: 'app-domains',
     standalone: true,
     imports: [
-        NgIf,
         NgFor,
         MatInputModule,
         MatButtonModule,

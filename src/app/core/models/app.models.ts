@@ -1,3 +1,11 @@
+export interface CurrentUser {
+    userId: string;
+    email: string;
+    username: string;
+    events: string[];
+    token: string;
+}
+
 export interface Event {
     _id: string;
     image: string;

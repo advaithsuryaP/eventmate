@@ -2,19 +2,24 @@
     <a mat-icon-button routerLink="/">
         <mat-icon>event</mat-icon>
     </a>
+
     <span class="flex-grow-1 ms-2">Eventmate</span>
 
-    <button mat-button routerLink="/domains">Domains</button>
     <button mat-button routerLink="">Events</button>
+    @if(currentUser) {
+    <button mat-button routerLink="/domains">Domains</button>
     <button mat-button routerLink="/profile">Profile</button>
-    <button mat-button routerLink="/auth">Auth</button>
+    <button mat-stroked-button color="accent" (click)="onSignout()">Logout</button>
+    } @else {
+    <button mat-stroked-button color="accent" routerLink="/auth">Login</button>
+    }
 
-    <span class="ms-flex ms-auto">
+    <!-- <span class="ms-flex ms-auto">
         <button mat-button [matMenuTriggerFor]="menu">
             <mat-icon>account_circle</mat-icon>
         </button>
         <mat-menu #menu="matMenu">
             <button mat-menu-item routerLink="/logout">Logout</button>
         </mat-menu>
-    </span>
+    </span> -->
 </mat-toolbar>

@@ -15,9 +15,11 @@
                     <p>{{ event.description }}</p>
                     <p><strong>Attendees:</strong> {{ event.attendees.length }}</p>
                 </mat-card-content>
+                @if(currentUser) {
                 <mat-card-actions>
                     <button mat-raised-button color="primary" (click)="registerEvent(event._id)">Register</button>
                 </mat-card-actions>
+                }
             </mat-card>
         </div>
     </div>
