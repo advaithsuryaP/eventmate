@@ -1,5 +1,5 @@
 import { ActivatedRouteSnapshot, ResolveFn, RouterStateSnapshot, Routes } from '@angular/router';
-import { Domain } from './core/models/app.models';
+import { Domain } from './core/app.models';
 import { inject } from '@angular/core';
 import { authGuard } from './core/services/auth.guard';
 import { DomainService } from './domains/domain.service';

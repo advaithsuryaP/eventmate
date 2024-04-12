@@ -6,9 +6,9 @@ import { MatListModule } from '@angular/material/list';
 import { MatToolbarModule } from '@angular/material/toolbar';
 import { MatButtonModule } from '@angular/material/button';
 import { RouterLink } from '@angular/router';
-import { AuthService } from '../core/services/auth.service';
+import { AuthService } from '../auth/auth.service';
 import { Subject, takeUntil } from 'rxjs';
-import { CurrentUser } from '../core/models/app.models';
+import { CurrentUser } from '../core/app.models';
 
 @Component({
     selector: 'app-header',

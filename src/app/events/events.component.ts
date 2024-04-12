@@ -10,10 +10,10 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
-import { CurrentUser, Domain, Event } from '../core/models/app.models';
+import { CurrentUser, Domain, Event } from '../core/app.models';
 import { Subject, combineLatest, takeUntil } from 'rxjs';
 import { Router } from '@angular/router';
-import { AuthService } from '../core/services/auth.service';
+import { AuthService } from '../auth/auth.service';
 import { EventService } from './event.service';
 import { DomainService } from '../domains/domain.service';
 

@@ -1,10 +1,10 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { CreateUserPayload, LoginUserPayload } from '../models/app.payload';
-import { API_URL_MAP } from '../constants/app.constants';
+import { CreateUserPayload, LoginUserPayload } from '../core/app.payload';
+import { API_URL_MAP } from '../core/app.constants';
 import { BehaviorSubject } from 'rxjs';
 import { Router } from '@angular/router';
-import { CurrentUser } from '../models/app.models';
+import { CurrentUser } from '../core/app.models';
 
 @Injectable({
     providedIn: 'root'

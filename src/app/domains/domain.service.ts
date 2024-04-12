@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, map, tap } from 'rxjs';
-import { API_URL_MAP } from '../core/constants/app.constants';
-import { Domain } from '../core/models/app.models';
-import { CreateDomainPayload } from '../core/models/app.payload';
+import { API_URL_MAP } from '../core/app.constants';
+import { Domain } from '../core/app.models';
+import { CreateDomainPayload } from '../core/app.payload';
 
 @Injectable({
     providedIn: 'root'

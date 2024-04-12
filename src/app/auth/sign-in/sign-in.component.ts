@@ -5,8 +5,8 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatIconModule } from '@angular/material/icon';
 import { MatInputModule } from '@angular/material/input';
 import { RouterLink } from '@angular/router';
-import { LoginUserPayload } from '../../core/models/app.payload';
-import { AuthService } from '../../core/services/auth.service';
+import { LoginUserPayload } from '../../core/app.payload';
+import { AuthService } from '../auth.service';
 
 @Component({
     standalone: true,

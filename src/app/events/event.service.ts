@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { Observable, map } from 'rxjs';
-import { API_URL_MAP } from '../core/constants/app.constants';
-import { CreateEventPayload } from '../core/models/app.payload';
-import { Event } from '../core/models/app.models';
+import { API_URL_MAP } from '../core/app.constants';
+import { CreateEventPayload } from '../core/app.payload';
+import { Event } from '../core/app.models';
 
 @Injectable({
     providedIn: 'root'

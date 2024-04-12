@@ -1,14 +1,14 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Subject, combineLatest, switchMap, takeUntil } from 'rxjs';
 import { ActivatedRoute, RouterLink } from '@angular/router';
-import { CurrentUser, Domain, Event } from '../core/models/app.models';
+import { CurrentUser, Domain, Event } from '../core/app.models';
 
 import { MatListModule, MatListOption } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
 import { DatePipe, NgFor, NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { RegisterEventPayload } from '../core/models/app.payload';
-import { AuthService } from '../core/services/auth.service';
+import { RegisterEventPayload } from '../core/app.payload';
+import { AuthService } from '../auth/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EventService } from '../events/event.service';
 import { DomainService } from '../domains/domain.service';
