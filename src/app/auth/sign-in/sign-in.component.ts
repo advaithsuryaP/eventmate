@@ -19,8 +19,8 @@ export default class SignInComponent {
     private _authService = inject(AuthService);
 
     signInForm = new FormGroup({
-        email: new FormControl('spandra1@umbc.edu', { nonNullable: true }),
-        password: new FormControl('advaith', { nonNullable: true })
+        email: new FormControl('', { nonNullable: true }),
+        password: new FormControl('', { nonNullable: true })
     });
 
     signIn() {
