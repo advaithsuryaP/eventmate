@@ -4,6 +4,7 @@ export interface CurrentUser {
     username: string;
     events: string[];
     token: string;
+    expiresIn: number;
 }
 
 export interface Event {
