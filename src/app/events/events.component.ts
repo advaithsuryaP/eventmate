@@ -11,7 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
 import { CurrentUser, Domain, Event } from '../core/models/app.models';
-import { Subject, combineLatest, switchMap, takeUntil } from 'rxjs';
+import { Subject, combineLatest, takeUntil } from 'rxjs';
 import { EventsService } from '../core/services/events.service';
 import { DomainsService } from '../core/services/domains.service';
 import { Router } from '@angular/router';

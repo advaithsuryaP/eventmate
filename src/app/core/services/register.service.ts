@@ -16,4 +16,10 @@ export class RegisterService {
             .post<{ message: string; data: Register }>(API_URL_MAP.REGISTER_EVENT, payload)
             .pipe(map(response => response.message));
     }
+
+    getRegisters(): Observable<Register[]> {
+        return this._http
+            .get<{ message: string; data: Register[] }>(`${API_URL_MAP.REGISTER_EVENT}`)
+            .pipe(map(response => response.data));
+    }
 }
