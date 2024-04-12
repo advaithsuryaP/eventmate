@@ -1,19 +1,13 @@
-import { ActivatedRouteSnapshot, ResolveFn, RouterStateSnapshot, Routes } from '@angular/router';
-import { Domain } from './core/app.models';
-import { inject } from '@angular/core';
+import { Routes } from '@angular/router';
 import { authGuard } from './core/services/auth.guard';
-import { DomainService } from './domains/domain.service';
-
-export const domainResolver: ResolveFn<Domain[]> = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
-    return inject(DomainService).getDomains();
-};
+import { appResolver } from './core/services/app.resolver';
 
 export const routes: Routes = [
     {
         path: '',
         pathMatch: 'full',
         loadComponent: () => import('./events/events.component'),
-        resolve: { domains: domainResolver }
+        resolve: { data: appResolver }
     },
     {
         path: 'auth',
