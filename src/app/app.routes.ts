@@ -2,6 +2,7 @@ import { ActivatedRouteSnapshot, ResolveFn, RouterStateSnapshot, Routes } from '
 import { Domain } from './core/models/app.models';
 import { inject } from '@angular/core';
 import { DomainsService } from './core/services/domains.service';
+import { authGuard } from './core/services/auth.guard';
 
 export const domainResolver: ResolveFn<Domain[]> = (route: ActivatedRouteSnapshot, state: RouterStateSnapshot) => {
     return inject(DomainsService).getDomains();
@@ -21,11 +22,13 @@ export const routes: Routes = [
     {
         path: 'domains',
         loadComponent: () => import('./domains/domains.component'),
+        canActivate: [authGuard],
         resolve: { domains: domainResolver }
     },
     {
         path: 'register/:eventId',
         loadComponent: () => import('./register/register.component'),
+        canActivate: [authGuard],
         resolve: { domains: domainResolver }
     }
 ];
