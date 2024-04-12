@@ -28,3 +28,10 @@ export interface CreateEventPayload {
     endTime: string;
     attendees: string[];
 }
+
+export interface RegisterEventPayload {
+    userId: string;
+    eventId: string;
+    domainId: string;
+    interests: string[];
+}

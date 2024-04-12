@@ -5,5 +5,5 @@ export const API_URL_MAP = {
     DOMAINS: `${environment.API_URL}/domains`,
     SIGNIN_USER: `${environment.API_URL}/users/signin`,
     SIGNUP_USER: `${environment.API_URL}/users/signup`,
-    REGISTER_EVENT: `${environment.API_URL}`
+    REGISTER_EVENT: `${environment.API_URL}/register`
 };

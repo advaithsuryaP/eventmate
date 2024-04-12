@@ -28,3 +28,11 @@ export interface Domain {
     interests: string[];
     rank: number;
 }
+
+export interface Register {
+    _id: string;
+    userId: string;
+    eventId: string;
+    domainId: string;
+    interests: string[];
+}
