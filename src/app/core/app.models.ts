@@ -19,6 +19,8 @@ export interface Event {
     startTime: string;
     endTime: string;
     attendees: string[];
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface Domain {
@@ -27,7 +29,8 @@ export interface Domain {
     name: string;
     description: string;
     interests: string[];
-    rank: number;
+    createdAt: string;
+    updatedAt: string;
 }
 
 export interface Registration {
@@ -36,4 +39,6 @@ export interface Registration {
     eventId: string;
     domainId: string;
     interests: string[];
+    createdAt: string;
+    updatedAt: string;
 }

@@ -16,11 +16,13 @@ export const routes: Routes = [
     {
         path: 'domains',
         loadComponent: () => import('./domains/domains.component'),
+        resolve: { data: appResolver },
         canActivate: [authGuard]
     },
     {
         path: 'register/:eventId',
         loadComponent: () => import('./registration/registration.component'),
+        resolve: { data: appResolver },
         canActivate: [authGuard]
     }
 ];

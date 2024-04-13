@@ -2,10 +2,8 @@ import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Subject, combineLatest, switchMap, takeUntil } from 'rxjs';
 import { ActivatedRoute, RouterLink } from '@angular/router';
 import { User, Domain, Event } from '../core/app.models';
-
-import { MatListModule, MatListOption } from '@angular/material/list';
 import { MatCardModule } from '@angular/material/card';
-import { DatePipe, NgFor, NgIf } from '@angular/common';
+import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { RegisterEventPayload } from '../core/app.payload';
 import { AuthService } from '../auth/auth.service';
@@ -14,16 +12,19 @@ import { EventService } from '../events/event.service';
 import { DomainService } from '../domains/domain.service';
 import { RegistrationService } from './registration.service';
 import { SNACKBAR_ACTION } from '../core/app.constants';
+import { MatChipSelectionChange, MatChipsModule } from '@angular/material/chips';
+import { FormControl, Validators } from '@angular/forms';
 
 @Component({
     selector: 'app-registration',
     standalone: true,
-    imports: [NgIf, NgFor, MatListModule, MatCardModule, DatePipe, MatButtonModule, RouterLink],
+    imports: [MatCardModule, DatePipe, MatButtonModule, RouterLink, MatChipsModule],
     templateUrl: './registration.component.html',
     styleUrl: './registration.component.css'
 })
 export default class RegistrationComponent implements OnInit, OnDestroy {
     isLoading: boolean = false;
+    selectedInterest: string = '';
     private _route = inject(ActivatedRoute);
     private _authService = inject(AuthService);
     private _eventService = inject(EventService);
@@ -68,20 +69,26 @@ export default class RegistrationComponent implements OnInit, OnDestroy {
         return this.domains.find(d => d._id === id)?.interests ?? [];
     }
 
-    registerForEvent(selectedOptions: MatListOption[]): void {
-        const interests: string[] = [];
-        selectedOptions.forEach(option => interests.push(option.value));
-        const payload: RegisterEventPayload = {
-            userId: this.currentUser!._id,
-            eventId: this.event._id,
-            interests: interests,
-            domainId: this.event.domainId
-        };
-        this._registrationService.registerEvent(payload).subscribe({
-            next: response => {
-                this._snackbarService.open(response, SNACKBAR_ACTION.SUCCESS, { duration: 3000 });
-            }
-        });
+    onSelectInterest(event: MatChipSelectionChange) {
+        if (event.selected) {
+            this.selectedInterest = event.source.value;
+        } else this.selectedInterest = '';
+    }
+
+    registerForEvent(): void {
+        if (this.selectedInterest) {
+            const payload: RegisterEventPayload = {
+                userId: this.currentUser!._id,
+                eventId: this.event._id,
+                interests: [this.selectedInterest],
+                domainId: this.event.domainId
+            };
+            this._registrationService.registerEvent(payload).subscribe({
+                next: response => {
+                    this._snackbarService.open(response, SNACKBAR_ACTION.SUCCESS, { duration: 3000 });
+                }
+            });
+        }
     }
 
     ngOnDestroy(): void {

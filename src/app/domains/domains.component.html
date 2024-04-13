@@ -4,37 +4,53 @@
             <h2 class="mb-4">Create Domain</h2>
             <form [formGroup]="domainForm">
                 <mat-form-field class="w-100">
-                    <mat-label>Name</mat-label>
-                    <input matInput formControlName="name" />
+                    <mat-label>Icon</mat-label>
+                    <input matInput type="text" formControlName="icon" autocomplete="off" />
                 </mat-form-field>
+
+                <mat-form-field class="w-100">
+                    <mat-label>Name</mat-label>
+                    <input matInput formControlName="name" autocomplete="off" />
+                </mat-form-field>
+
                 <mat-form-field class="w-100">
                     <mat-label>Description</mat-label>
-                    <textarea matInput formControlName="description"></textarea>
+                    <textarea matInput formControlName="description" autocomplete="off"></textarea>
                 </mat-form-field>
+
                 <mat-form-field class="w-100">
-                    <mat-label>Interests</mat-label>
-                    <mat-chip-grid #chipList>
+                    <mat-label>Enter interest areas</mat-label>
+                    <mat-chip-grid #chipGrid aria-label="Enter interests">
+                        @for (interest of domainForm.value.interests; track interest) {
                         <mat-chip-row
-                            *ngFor="let interest of domainForm.value.interests; let i = index"
+                            (removed)="remove(interest)"
                             [editable]="true"
-                            [removable]="true"
-                            (removed)="removeInterest(interest)">
+                            (edited)="edit(interest, $event)"
+                            [aria-description]="'press enter to edit ' + interest">
                             {{ interest }}
-                            <mat-icon matChipRemove>cancel</mat-icon>
+                            <button matChipRemove [attr.aria-label]="'remove ' + interest">
+                                <mat-icon>cancel</mat-icon>
+                            </button>
                         </mat-chip-row>
+                        }
                         <input
-                            placeholder="Add interest..."
-                            [matChipInputFor]="chipList"
+                            placeholder="New interest..."
+                            [matChipInputFor]="chipGrid"
                             [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
                             [matChipInputAddOnBlur]="true"
-                            (matChipInputTokenEnd)="addInterest($event)" />
+                            (matChipInputTokenEnd)="add($event)" />
                     </mat-chip-grid>
+                    <mat-hint align="end">Total: {{ domainForm.value.interests?.length }}</mat-hint>
                 </mat-form-field>
-                <mat-form-field class="w-100">
-                    <mat-label>Rank</mat-label>
-                    <input matInput type="number" formControlName="rank" />
-                </mat-form-field>
-                <button mat-raised-button type="submit" color="primary" (click)="createDomain()">Create</button>
+
+                <button
+                    mat-raised-button
+                    type="submit"
+                    color="primary"
+                    (click)="createDomain()"
+                    [disabled]="domainForm.invalid">
+                    Create Domain
+                </button>
             </form>
         </div>
         <div class="col-md-8">

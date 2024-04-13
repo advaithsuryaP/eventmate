@@ -14,7 +14,6 @@ export interface CreateDomainPayload {
     name: string;
     description: string;
     interests: string[];
-    rank: number;
 }
 
 export interface CreateEventPayload {

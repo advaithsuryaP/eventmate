@@ -2,6 +2,7 @@
 <form [formGroup]="signUpForm" class="d-flex flex-column gap-2">
     <mat-form-field>
         <mat-label>Email</mat-label>
+        <mat-icon matIconPrefix>mail</mat-icon>
         <input matInput type="email" name="email" formControlName="email" autocomplete="off" />
         <mat-error>
             @if(controls.email.hasError('required')){ This is a required field } @else { Please enter a valid email }
@@ -10,12 +11,14 @@
 
     <mat-form-field>
         <mat-label>Username</mat-label>
+        <mat-icon matIconPrefix>alternate_email</mat-icon>
         <input matInput type="text" name="username" formControlName="username" autocomplete="off" />
         <mat-error>This is a required field</mat-error>
     </mat-form-field>
 
     <mat-form-field>
         <mat-label>Password</mat-label>
+        <mat-icon matIconPrefix>pin</mat-icon>
         <input
             matInput
             name="password"

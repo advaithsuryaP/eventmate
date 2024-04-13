@@ -1,4 +1,5 @@
-<div class="container my-4" *ngIf="event">
+@if(event) {
+<div class="container my-4">
     <div class="row justify-content-center">
         <div class="col-md-4">
             <mat-card>
@@ -15,22 +16,22 @@
                     <p><strong>Time:</strong> {{ event.startTime }} - {{ event.endTime }}</p>
 
                     <div class="mt-4">
-                        <h3>Select Your Interests</h3>
-                        <mat-selection-list #interestList>
-                            <mat-list-option
-                                *ngFor="let interest of getDomainInterestsById(event.domainId)"
-                                [value]="interest"
-                                checkboxPosition="before">
+                        <h4 class="fw-medium">Select your Interests</h4>
+                        <mat-chip-listbox class="mat-mdc-chip-set-stacked" aria-label="Color selection">
+                            @for (interest of getDomainInterestsById(event.domainId); track interest) {
+                            <mat-chip-option [value]="interest" (selectionChange)="onSelectInterest($event)">
                                 {{ interest }}
-                            </mat-list-option>
-                        </mat-selection-list>
+                            </mat-chip-option>
+                            }
+                        </mat-chip-listbox>
                     </div>
                 </mat-card-content>
                 <mat-card-actions>
                     <button
                         mat-raised-button
                         color="primary"
-                        (click)="registerForEvent(interestList.selectedOptions.selected)">
+                        (click)="registerForEvent()"
+                        [disabled]="!selectedInterest">
                         Register
                     </button>
                     <button mat-button routerLink="/">Cancel</button>
@@ -39,3 +40,5 @@
         </div>
     </div>
 </div>
+
+}

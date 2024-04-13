@@ -32,6 +32,10 @@ export default class SignInComponent {
         password: new FormControl('admin', { nonNullable: true, validators: [Validators.required] })
     });
 
+    get controls() {
+        return this.signInForm.controls;
+    }
+
     signIn(): void {
         if (this.signInForm.valid) {
             this.isLoading = true;
@@ -40,7 +44,7 @@ export default class SignInComponent {
                 next: response => {
                     this.isLoading = false;
                     this._snackbar.open(response, SNACKBAR_ACTION.SUCCESS);
-                    // this._router.navigate(['/']);
+                    this._router.navigate(['/']);
                 },
                 error: err => {
                     this.isLoading = false;
