@@ -20,6 +20,11 @@ export const routes: Routes = [
         canActivate: [authGuard]
     },
     {
+        path: 'profile/:userId',
+        loadComponent: () => import('./profile/profile.component'),
+        resolve: { data: appResolver }
+    },
+    {
         path: 'register/:eventId',
         loadComponent: () => import('./registration/registration.component'),
         resolve: { data: appResolver },

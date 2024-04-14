@@ -10,12 +10,13 @@ import { MatButtonModule } from '@angular/material/button';
 
 import { MatIconModule } from '@angular/material/icon';
 import { CommonModule } from '@angular/common';
-import { User, Domain, Event } from '../core/app.models';
+import { User, Domain, Event, Registration } from '../core/app.models';
 import { Subject, combineLatest, takeUntil } from 'rxjs';
 import { Router } from '@angular/router';
 import { AuthService } from '../auth/auth.service';
 import { EventService } from './event.service';
 import { DomainService } from '../domains/domain.service';
+import { RegistrationService } from '../registration/registration.service';
 
 @Component({
     selector: 'app-events',
@@ -31,12 +32,12 @@ import { DomainService } from '../domains/domain.service';
         MatDatepickerModule,
         MatIconModule
     ],
-    templateUrl: './events.component.html',
-    styleUrl: './events.component.css'
+    templateUrl: './events.component.html'
 })
 export default class EventsComponent implements OnInit, OnDestroy {
     events: Event[] = [];
     domains: Domain[] = [];
+    registrations: Registration[] = [];
 
     currentUser!: User | null;
 
@@ -44,6 +45,7 @@ export default class EventsComponent implements OnInit, OnDestroy {
     private _authService = inject(AuthService);
     private _eventService = inject(EventService);
     private _domainService = inject(DomainService);
+    private _registrationService = inject(RegistrationService);
 
     private _unsubscribeAll: Subject<null> = new Subject();
 
@@ -51,16 +53,26 @@ export default class EventsComponent implements OnInit, OnDestroy {
         combineLatest([
             this._authService.currentUserObs$,
             this._domainService.domainsObs$,
-            this._eventService.getEvents()
+            this._eventService.getEvents(),
+            this._registrationService.getRegistrations({})
         ])
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
-                next: ([currentUser, domains, events]) => {
+                next: ([currentUser, domains, events, registrations]) => {
                     this.currentUser = currentUser;
                     this.domains = domains;
                     this.events = events;
+                    this.registrations = registrations;
                 }
             });
+    }
+
+    getAttendeeCountByEventId(eventId: string): number {
+        let count = 0;
+        this.registrations.forEach(r => {
+            if (r.eventId === eventId) count += 1;
+        });
+        return count;
     }
 
     getDomainNameById(id: string): string {

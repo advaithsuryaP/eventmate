@@ -13,7 +13,7 @@
                     <p><strong>Domain:</strong> {{ getDomainNameById(event.domainId) }}</p>
                     <p><strong>Location:</strong> {{ event.location }}</p>
                     <p>{{ event.description }}</p>
-                    <p><strong>Attendees:</strong> {{ event.attendees.length }}</p>
+                    <p><strong>Attendees:</strong> {{ getAttendeeCountByEventId(event._id) }}</p>
                 </mat-card-content>
                 @if(currentUser) {
                 <mat-card-actions>

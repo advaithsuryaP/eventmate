@@ -2,7 +2,6 @@ export interface User {
     _id: string;
     email: string;
     username: string;
-    events: string[];
     isAdmin: boolean;
     createdAt: string;
     updatedAt: string;
@@ -18,7 +17,6 @@ export interface Event {
     date: string;
     startTime: string;
     endTime: string;
-    attendees: string[];
     createdAt: string;
     updatedAt: string;
 }

@@ -34,3 +34,8 @@ export interface RegisterEventPayload {
     domainId: string;
     interests: string[];
 }
+
+export interface FetchEventsPayload {
+    userId?: string;
+    eventId?: string;
+}
