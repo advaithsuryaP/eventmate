@@ -25,11 +25,11 @@ export default class SignInComponent {
     private _authService = inject(AuthService);
 
     signInForm = new FormGroup({
-        email: new FormControl('admin@eventmate.com', {
+        email: new FormControl('', {
             nonNullable: true,
             validators: [Validators.required, Validators.email]
         }),
-        password: new FormControl('admin', { nonNullable: true, validators: [Validators.required] })
+        password: new FormControl('', { nonNullable: true, validators: [Validators.required] })
     });
 
     get controls() {
