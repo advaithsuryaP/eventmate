@@ -26,4 +26,12 @@ export class RegistrationService {
             .get<{ message: string; data: Registration[] }>(`${API_URL_MAP.REGISTRATIONS}`, { params: httpParams })
             .pipe(map(response => response.data));
     }
+
+    deleteRegistration(
+        registrationId: string
+    ): Observable<{ message: string; data: { acknowledged: boolean; deletedCount: number } }> {
+        return this._http.delete<{ message: string; data: { acknowledged: boolean; deletedCount: number } }>(
+            `${API_URL_MAP.REGISTRATIONS}/${registrationId}`
+        );
+    }
 }

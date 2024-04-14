@@ -13,6 +13,8 @@ import { EventService } from '../events/event.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { DomainService } from '../domains/domain.service';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { SNACKBAR_ACTION } from '../core/app.constants';
 
 @Component({
     selector: 'app-profile',
@@ -38,6 +40,7 @@ export default class ProfileComponent implements OnInit, OnDestroy {
     domains: Domain[] = [];
     registrations: Registration[] = [];
 
+    private _snackbar = inject(MatSnackBar);
     private _authService = inject(AuthService);
     private _eventService = inject(EventService);
     private _domainService = inject(DomainService);
@@ -77,7 +80,20 @@ export default class ProfileComponent implements OnInit, OnDestroy {
         return this.domains.find(d => d._id === domainId);
     }
 
-    cancelRegistration(): void {}
+    cancelRegistration(registrationId: string, index: number): void {
+        this.isLoading = true;
+        this._registrationService.deleteRegistration(registrationId).subscribe({
+            next: response => {
+                if (response.data.deletedCount === 1) {
+                    this._snackbar.open(response.message, SNACKBAR_ACTION.SUCCESS);
+                    this.registrations.splice(index, 1);
+                } else {
+                    this._snackbar.open('Error while cancelling the registration', SNACKBAR_ACTION.ERROR);
+                }
+                this.isLoading = false;
+            }
+        });
+    }
 
     updateInterest(): void {}
 

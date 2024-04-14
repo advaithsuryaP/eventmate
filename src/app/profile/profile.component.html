@@ -13,6 +13,7 @@
             </div>
 
             <h2>Events Registered:</h2>
+            @if(registrations.length > 0) {
             <mat-accordion>
                 @for (registration of registrations; track registration._id; let index = $index) {
                 <mat-expansion-panel *ngIf="getEventById(registration.eventId) as event">
@@ -40,12 +41,17 @@
                         </div>
                     </div>
                     <mat-action-row>
-                        <button mat-raised-button color="accent" (click)="cancelRegistration()">Cancel</button>
+                        <button mat-raised-button color="accent" (click)="cancelRegistration(registration._id, index)">
+                            Cancel
+                        </button>
                         <button mat-raised-button color="primary" (click)="updateInterest()" disabled>Update</button>
                     </mat-action-row>
                 </mat-expansion-panel>
                 }
             </mat-accordion>
+            } @else {
+            <p class="card-text">No registrations yet!</p>
+            }
         </div>
     </div>
 </div>
