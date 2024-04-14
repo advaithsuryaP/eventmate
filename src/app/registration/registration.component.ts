@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Subject, combineLatest, switchMap, takeUntil } from 'rxjs';
-import { ActivatedRoute, RouterLink } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { User, Domain, Event } from '../core/app.models';
 import { MatCardModule } from '@angular/material/card';
 import { DatePipe } from '@angular/common';
@@ -13,18 +13,20 @@ import { DomainService } from '../domains/domain.service';
 import { RegistrationService } from './registration.service';
 import { SNACKBAR_ACTION } from '../core/app.constants';
 import { MatChipSelectionChange, MatChipsModule } from '@angular/material/chips';
-import { FormControl, Validators } from '@angular/forms';
+import { MatIconModule } from '@angular/material/icon';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
     selector: 'app-registration',
     standalone: true,
-    imports: [MatCardModule, DatePipe, MatButtonModule, RouterLink, MatChipsModule],
-    templateUrl: './registration.component.html',
-    styleUrl: './registration.component.css'
+    imports: [MatCardModule, DatePipe, MatButtonModule, RouterLink, MatChipsModule, MatIconModule, MatTooltipModule],
+    templateUrl: './registration.component.html'
 })
 export default class RegistrationComponent implements OnInit, OnDestroy {
     isLoading: boolean = false;
     selectedInterest: string = '';
+
+    private _router = inject(Router);
     private _route = inject(ActivatedRoute);
     private _authService = inject(AuthService);
     private _eventService = inject(EventService);
@@ -85,6 +87,7 @@ export default class RegistrationComponent implements OnInit, OnDestroy {
             };
             this._registrationService.registerEvent(payload).subscribe({
                 next: response => {
+                    this._router.navigate(['/']);
                     this._snackbarService.open(response, SNACKBAR_ACTION.SUCCESS, { duration: 3000 });
                 }
             });

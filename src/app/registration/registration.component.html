@@ -15,16 +15,17 @@
                     <p><strong>Date:</strong> {{ event.date | date : 'MMM d, y' }}</p>
                     <p><strong>Time:</strong> {{ event.startTime }} - {{ event.endTime }}</p>
 
-                    <div class="mt-4">
-                        <h4 class="fw-medium">Select your Interests</h4>
-                        <mat-chip-listbox class="mat-mdc-chip-set-stacked" aria-label="Color selection">
-                            @for (interest of getDomainInterestsById(event.domainId); track interest) {
-                            <mat-chip-option [value]="interest" (selectionChange)="onSelectInterest($event)">
-                                {{ interest }}
-                            </mat-chip-option>
-                            }
-                        </mat-chip-listbox>
+                    <div class="d-flex align-items-center gap-1 mb-1">
+                        <h4 class="fw-medium my-0">Select your Interest</h4>
+                        <mat-icon matTooltip="Please chose your interest to proceed with registration.">info</mat-icon>
                     </div>
+                    <mat-chip-listbox class="mat-mdc-chip-set-stacked" aria-label="Color selection">
+                        @for (interest of getDomainInterestsById(event.domainId); track interest) {
+                        <mat-chip-option [value]="interest" (selectionChange)="onSelectInterest($event)">
+                            {{ interest }}
+                        </mat-chip-option>
+                        }
+                    </mat-chip-listbox>
                 </mat-card-content>
                 <mat-card-actions>
                     <button
