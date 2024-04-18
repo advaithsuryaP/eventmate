@@ -7,7 +7,7 @@ import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { Domain } from '../../core/app.models';
-import { NgFor } from '@angular/common';
+import { NgFor, UpperCasePipe } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DomainService } from './domain.service';
@@ -15,12 +15,17 @@ import { CreateDomainPayload } from '../../core/app.payload';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SNACKBAR_ACTION } from '../../core/app.constants';
+import { MatCardModule } from '@angular/material/card';
+import { MatPaginatorModule } from '@angular/material/paginator';
 
 @Component({
     selector: 'app-domains',
     standalone: true,
     imports: [
         NgFor,
+        MatCardModule,
+        UpperCasePipe,
+        MatPaginatorModule,
         MatInputModule,
         MatButtonModule,
         MatFormFieldModule,
@@ -29,44 +34,41 @@ import { SNACKBAR_ACTION } from '../../core/app.constants';
         MatIconModule,
         ReactiveFormsModule
     ],
-    templateUrl: './domains.component.html',
-    styleUrl: './domains.component.css'
+    templateUrl: './domains.component.html'
 })
 export default class DomainsComponent implements OnInit, OnDestroy {
     isLoading: boolean = false;
     domains: Domain[] = [];
-    readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
-    domainForm = new FormGroup({
-        icon: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-        name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-        description: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
-        interests: new FormArray<FormControl<string>>([], { validators: [Validators.required] })
-    });
+    readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
     private _snackbar = inject(MatSnackBar);
     private announcer = inject(LiveAnnouncer);
     private _domainService = inject(DomainService);
     private _unsubscribeAll: Subject<null> = new Subject();
 
+    domainForm = new FormGroup({
+        name: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+        description: new FormControl<string>('', { nonNullable: true, validators: [Validators.required] }),
+        interests: new FormArray<FormControl<string>>([], { validators: [Validators.required] })
+    });
+
     ngOnInit(): void {
         this._domainService.domainsObs$.pipe(takeUntil(this._unsubscribeAll)).subscribe({
-            next: response => {
-                this.domains = response;
-            }
+            next: response => (this.domains = response)
         });
     }
 
-    createDomain(): void {
-        if (this.domainForm.valid) {
-            const payload: CreateDomainPayload = this.domainForm.getRawValue();
-            this._domainService.createDomain(payload).subscribe({
-                next: response => {
-                    this.domainForm.reset();
-                    this._snackbar.open(response, SNACKBAR_ACTION.SUCCESS);
-                }
-            });
-        }
+    getIndexBgColor(index: number): string {
+        const INDEX_JSON: { [key: number]: string } = {
+            0: 'bg-primary-subtle',
+            1: 'bg-danger-subtle',
+            2: 'bg-success-subtle',
+            3: 'bg-warning-subtle',
+            4: 'bg-info-subtle',
+            5: 'bg-dark-subtle'
+        };
+        return INDEX_JSON[index];
     }
 
     editDomain(domainId: string) {}
@@ -88,7 +90,7 @@ export default class DomainsComponent implements OnInit, OnDestroy {
         this.isLoading = true;
         this._domainService.deleteDomain(domainId).subscribe({
             next: response => {
-                if(response.data.deletedCount === 1) {
+                if (response.data.deletedCount === 1) {
                     this._snackbar.open(response.message, SNACKBAR_ACTION.SUCCESS);
                     this.domains.splice(index, 1);
                 } else {
@@ -96,7 +98,19 @@ export default class DomainsComponent implements OnInit, OnDestroy {
                 }
                 this.isLoading = false;
             }
-        })
+        });
+    }
+
+    createDomain(): void {
+        if (this.domainForm.valid) {
+            const payload: CreateDomainPayload = this.domainForm.getRawValue();
+            this._domainService.createDomain(payload).subscribe({
+                next: response => {
+                    this.domainForm.reset();
+                    this._snackbar.open(response, SNACKBAR_ACTION.SUCCESS);
+                }
+            });
+        }
     }
 
     add(event: MatChipInputEvent): void {

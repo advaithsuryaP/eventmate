@@ -1,74 +1,100 @@
 <div class="container my-4">
     <div class="row">
-        <div class="col-md-4">
-            <h2 class="mb-4">Create Domain</h2>
-            <form [formGroup]="domainForm">
-                <mat-form-field class="w-100">
-                    <mat-label>Icon</mat-label>
-                    <input matInput type="text" formControlName="icon" autocomplete="off" />
-                </mat-form-field>
+        <div class="col-md-3">
+            <div class="d-flex">
+                <div class="mat-headline-6">Add Domain</div>
+            </div>
+            <mat-card>
+                <mat-card-content>
+                    <form [formGroup]="domainForm">
+                        <mat-form-field class="w-100">
+                            <mat-label>Name</mat-label>
+                            <input matInput formControlName="name" autocomplete="off" placeholder="Enter domain name" />
+                        </mat-form-field>
 
-                <mat-form-field class="w-100">
-                    <mat-label>Name</mat-label>
-                    <input matInput formControlName="name" autocomplete="off" />
-                </mat-form-field>
+                        <mat-form-field class="w-100">
+                            <mat-label>Description</mat-label>
+                            <textarea
+                                matInput
+                                autocomplete="off"
+                                formControlName="description"
+                                placeholder="Enter domain description"></textarea>
+                        </mat-form-field>
 
-                <mat-form-field class="w-100">
-                    <mat-label>Description</mat-label>
-                    <textarea matInput formControlName="description" autocomplete="off"></textarea>
-                </mat-form-field>
+                        <mat-form-field class="w-100">
+                            <mat-label>Enter interest areas</mat-label>
+                            <mat-chip-grid #chipGrid aria-label="Enter interests">
+                                @for (interest of domainForm.value.interests; track interest) {
+                                <mat-chip-row
+                                    (removed)="remove(interest)"
+                                    [editable]="true"
+                                    (edited)="edit(interest, $event)"
+                                    [aria-description]="'press enter to edit ' + interest">
+                                    {{ interest }}
+                                    <button matChipRemove [attr.aria-label]="'remove ' + interest">
+                                        <mat-icon>cancel</mat-icon>
+                                    </button>
+                                </mat-chip-row>
+                                }
+                                <input
+                                    placeholder="New interest..."
+                                    [matChipInputFor]="chipGrid"
+                                    [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
+                                    [matChipInputAddOnBlur]="true"
+                                    (matChipInputTokenEnd)="add($event)" />
+                            </mat-chip-grid>
+                            <mat-hint align="end">Total: {{ domainForm.value.interests?.length }}</mat-hint>
+                        </mat-form-field>
 
-                <mat-form-field class="w-100">
-                    <mat-label>Enter interest areas</mat-label>
-                    <mat-chip-grid #chipGrid aria-label="Enter interests">
-                        @for (interest of domainForm.value.interests; track interest) {
-                        <mat-chip-row
-                            (removed)="remove(interest)"
-                            [editable]="true"
-                            (edited)="edit(interest, $event)"
-                            [aria-description]="'press enter to edit ' + interest">
-                            {{ interest }}
-                            <button matChipRemove [attr.aria-label]="'remove ' + interest">
-                                <mat-icon>cancel</mat-icon>
-                            </button>
-                        </mat-chip-row>
-                        }
-                        <input
-                            placeholder="New interest..."
-                            [matChipInputFor]="chipGrid"
-                            [matChipInputSeparatorKeyCodes]="separatorKeysCodes"
-                            [matChipInputAddOnBlur]="true"
-                            (matChipInputTokenEnd)="add($event)" />
-                    </mat-chip-grid>
-                    <mat-hint align="end">Total: {{ domainForm.value.interests?.length }}</mat-hint>
-                </mat-form-field>
-
-                <button
-                    mat-raised-button
-                    type="submit"
-                    color="primary"
-                    (click)="createDomain()"
-                    [disabled]="domainForm.invalid">
-                    Create Domain
-                </button>
-            </form>
-        </div>
-        <div class="col-md-8">
-            <h2 class="mb-4">Domains</h2>
-            <mat-list>
-                @for (domain of domains; track domain; let index = $index) {
-                <mat-list-item>
-                    <mat-icon matListItemIcon>{{ domain.icon }}</mat-icon>
-                    <div matListItemTitle class="d-flex justify-content-between">
-                        <div>{{ domain.name }}</div>
-                        <button mat-icon-button (click)="deleteDomain(domain._id, index)" color="warn">
-                            <mat-icon>delete</mat-icon>
+                        <button
+                            type="submit"
+                            color="primary"
+                            mat-raised-button
+                            (click)="createDomain()"
+                            [disabled]="domainForm.invalid">
+                            <mat-icon>domain_add</mat-icon>
+                            Create Domain
                         </button>
-                    </div>
-                    <div matListItemLine>{{ domain.description }}</div>
-                </mat-list-item>
-                }
-            </mat-list>
+                    </form>
+                </mat-card-content>
+            </mat-card>
+        </div>
+        <div class="col-md-9">
+            <div class="d-flex">
+                <div class="mat-headline-6">List of all domains</div>
+            </div>
+            <mat-card>
+                <mat-card-content>
+                    <ol class="list-group list-group-flush">
+                        @for (domain of domains; track domain; let index = $index) {
+                        <li class="list-group-item d-flex justify-content-between align-items-start my-2">
+                            <div class="ms-2 me-auto">
+                                <div class="mat-body-strong">{{ domain.name | uppercase }}</div>
+                                <div class="mat-body-2 mb-1">{{ domain.description }}</div>
+                                <div class="d-flex gap-2">
+                                    @for (interest of domain.interests; track interest; let index = $index) {
+                                    <div class="p-1 border border-secondary rounded" [class]="getIndexBgColor(index)">
+                                        {{ interest }}
+                                    </div>
+                                    }
+                                </div>
+                            </div>
+                            <div class="d-flex">
+                                <button mat-icon-button color="primary">
+                                    <mat-icon>edit</mat-icon>
+                                </button>
+                                <button mat-icon-button color="warn" (click)="deleteDomain(domain._id, index)">
+                                    <mat-icon>delete</mat-icon>
+                                </button>
+                            </div>
+                        </li>
+                        }
+                    </ol>
+                </mat-card-content>
+                <mat-card-footer>
+                    <mat-paginator></mat-paginator>
+                </mat-card-footer>
+            </mat-card>
         </div>
     </div>
 </div>
