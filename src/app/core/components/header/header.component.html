@@ -4,7 +4,7 @@
     </a>
 
     <span class="flex-grow-1 ms-2">Eventmate</span>
-    <button mat-button routerLink="">Events</button>
+    <button mat-button routerLink="/events">Events</button>
     @if(currentUser) {
     <button mat-button routerLink="/domains">Domains</button>
     <button mat-button [routerLink]="['/profile', currentUser._id]">Profile</button>

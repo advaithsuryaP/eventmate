@@ -1,17 +1,17 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Subject, combineLatest, switchMap, takeUntil } from 'rxjs';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { User, Domain, Event } from '../core/app.models';
+import { User, Domain, Event } from '../../core/app.models';
 import { MatCardModule } from '@angular/material/card';
 import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { RegisterEventPayload } from '../core/app.payload';
-import { AuthService } from '../auth/auth.service';
+import { RegisterEventPayload } from '../../core/app.payload';
+import { AuthService } from '../../auth/auth.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { EventService } from '../events/event.service';
 import { DomainService } from '../domains/domain.service';
 import { RegistrationService } from './registration.service';
-import { SNACKBAR_ACTION } from '../core/app.constants';
+import { SNACKBAR_ACTION } from '../../core/app.constants';
 import { MatChipSelectionChange, MatChipsModule } from '@angular/material/chips';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
@@ -87,7 +87,7 @@ export default class RegistrationComponent implements OnInit, OnDestroy {
             };
             this._registrationService.registerEvent(payload).subscribe({
                 next: response => {
-                    this._router.navigate(['/']);
+                    this._router.navigate(['/events']);
                     this._snackbarService.open(response, SNACKBAR_ACTION.SUCCESS, { duration: 3000 });
                 }
             });

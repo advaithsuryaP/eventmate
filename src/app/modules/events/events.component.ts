@@ -9,28 +9,33 @@ import { MatListModule } from '@angular/material/list';
 import { MatButtonModule } from '@angular/material/button';
 
 import { MatIconModule } from '@angular/material/icon';
-import { CommonModule } from '@angular/common';
-import { User, Domain, Event, Registration } from '../core/app.models';
+import { CommonModule, DatePipe, DecimalPipe } from '@angular/common';
+import { User, Domain, Event, Registration } from '../../core/app.models';
 import { Subject, combineLatest, takeUntil } from 'rxjs';
 import { Router } from '@angular/router';
-import { AuthService } from '../auth/auth.service';
+import { AuthService } from '../../auth/auth.service';
 import { EventService } from './event.service';
 import { DomainService } from '../domains/domain.service';
 import { RegistrationService } from '../registration/registration.service';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
     selector: 'app-events',
     standalone: true,
     imports: [
-        CommonModule,
-        MatListModule,
+        DatePipe,
+        DecimalPipe,
         MatCardModule,
-        MatFormFieldModule,
-        MatNativeDateModule,
+        MatIconModule,
+        MatListModule,
         MatInputModule,
         MatButtonModule,
-        MatDatepickerModule,
-        MatIconModule
+        MatDividerModule,
+        MatTooltipModule,
+        MatFormFieldModule,
+        MatNativeDateModule,
+        MatDatepickerModule
     ],
     templateUrl: './events.component.html'
 })

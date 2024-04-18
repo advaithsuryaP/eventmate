@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { AuthService } from '../auth/auth.service';
-import { Domain, Event, Registration, User } from '../core/app.models';
+import { AuthService } from '../../auth/auth.service';
+import { Domain, Event, Registration, User } from '../../core/app.models';
 import { Subject, combineLatest, switchMap, takeUntil } from 'rxjs';
 import { DatePipe, NgIf, TitleCasePipe } from '@angular/common';
 import { RegistrationService } from '../registration/registration.service';
-import { FetchEventsPayload } from '../core/app.payload';
+import { FetchEventsPayload } from '../../core/app.payload';
 
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
@@ -14,7 +14,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { DomainService } from '../domains/domain.service';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { SNACKBAR_ACTION } from '../core/app.constants';
+import { SNACKBAR_ACTION } from '../../core/app.constants';
 
 @Component({
     selector: 'app-profile',

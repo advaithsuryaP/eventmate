@@ -6,15 +6,15 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { Domain } from '../core/app.models';
+import { Domain } from '../../core/app.models';
 import { NgFor } from '@angular/common';
 import { Subject, takeUntil } from 'rxjs';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DomainService } from './domain.service';
-import { CreateDomainPayload } from '../core/app.payload';
+import { CreateDomainPayload } from '../../core/app.payload';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { SNACKBAR_ACTION } from '../core/app.constants';
+import { SNACKBAR_ACTION } from '../../core/app.constants';
 
 @Component({
     selector: 'app-domains',
