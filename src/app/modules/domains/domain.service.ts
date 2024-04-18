@@ -34,4 +34,8 @@ export class DomainService {
             })
         );
     }
+
+    deleteDomain(domainId: string): Observable<{ message: string; data: { acknowledged: boolean; deletedCount: number } }> {
+        return this._http.delete<{message: string; data: {acknowledged: boolean; deletedCount: number}}>(`${API_URL_MAP.DOMAINS}/${domainId}`);
+    }
 }

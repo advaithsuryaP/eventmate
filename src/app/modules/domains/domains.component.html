@@ -56,10 +56,15 @@
         <div class="col-md-8">
             <h2 class="mb-4">Domains</h2>
             <mat-list>
-                @for (domain of domains; track domain) {
+                @for (domain of domains; track domain; let index = $index) {
                 <mat-list-item>
                     <mat-icon matListItemIcon>{{ domain.icon }}</mat-icon>
-                    <div matListItemTitle>{{ domain.name }}</div>
+                    <div matListItemTitle class="d-flex justify-content-between">
+                        <div>{{ domain.name }}</div>
+                        <button mat-icon-button (click)="deleteDomain(domain._id, index)" color="warn">
+                            <mat-icon>delete</mat-icon>
+                        </button>
+                    </div>
                     <div matListItemLine>{{ domain.description }}</div>
                 </mat-list-item>
                 }
