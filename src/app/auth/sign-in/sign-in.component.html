@@ -1,34 +1,37 @@
-<h2>Sign In</h2>
-<form [formGroup]="signInForm" class="d-flex flex-column gap-2">
+<div class="mat-headline-4 fw-bold mb-1">Sign In</div>
+<div class="mat-subtitle-2 mb-4">Don't have an account? <a [routerLink]="['/auth', 'sign-up']">Sign up</a></div>
+<form [formGroup]="signInForm" class="d-flex flex-column gap-3">
     <mat-form-field>
         <mat-label>Email</mat-label>
-        <mat-icon matIconPrefix>mail</mat-icon>
-        <input matInput type="email" name="email" formControlName="email" autocomplete="off" />
+        <mat-icon color="primary" matIconPrefix>mail</mat-icon>
+        <input
+            matInput
+            type="email"
+            name="email"
+            autocomplete="off"
+            formControlName="email"
+            placeholder="Enter email address" />
         <mat-error>
             @if(controls.email.hasError('required')){ This is a required field } @else { Please enter a valid email }
         </mat-error>
     </mat-form-field>
     <mat-form-field>
         <mat-label>Password</mat-label>
-        <mat-icon matIconPrefix>pin</mat-icon>
+        <mat-icon color="primary" matIconPrefix>pin</mat-icon>
         <input
             matInput
             name="password"
             autocomplete="off"
             formControlName="password"
+            placeholder="Enter password"
             [type]="showPassword ? 'text' : 'password'" />
         <button matSuffix mat-icon-button (click)="showPassword = !showPassword">
-            <mat-icon> @if(showPassword){ visibility } @else { visibility_off } </mat-icon>
+            <mat-icon color="primary"> @if(showPassword){ visibility } @else { visibility_off } </mat-icon>
         </button>
         <mat-error>
             @if(controls.password.hasError('minlength')) { Password should have more than
             {{ controls.password.getError('minlength').requiredLength }} characters } @else { This is a required field }
         </mat-error>
     </mat-form-field>
-    <div class="d-flex justify-content-between align-items-center">
-        <button mat-raised-button color="primary" type="submit" (click)="signIn()" [disabled]="signInForm.invalid">
-            Sign In
-        </button>
-        <button type="button" mat-stroked-button routerLink="/auth/sign-up">Sign Up</button>
-    </div>
+    <button mat-raised-button color="primary" type="submit" (click)="signIn()">Sign In</button>
 </form>

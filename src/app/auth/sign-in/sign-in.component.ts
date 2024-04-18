@@ -13,8 +13,7 @@ import { SNACKBAR_ACTION } from '../../core/app.constants';
 @Component({
     standalone: true,
     imports: [ReactiveFormsModule, MatFormFieldModule, MatInputModule, MatButtonModule, MatIconModule, RouterLink],
-    templateUrl: './sign-in.component.html',
-    styleUrl: './sign-in.component.css'
+    templateUrl: './sign-in.component.html'
 })
 export default class SignInComponent {
     showPassword: boolean = false;

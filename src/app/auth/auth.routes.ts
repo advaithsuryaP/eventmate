@@ -8,6 +8,11 @@ export default [
         children: [
             {
                 path: '',
+                pathMatch: 'full',
+                redirectTo: 'sign-in'
+            },
+            {
+                path: 'sign-in',
                 loadComponent: () => import('./sign-in/sign-in.component')
             },
             {

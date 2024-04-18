@@ -16,11 +16,11 @@ export const appConfig: ApplicationConfig = {
         provideHttpClient(withInterceptors([authInterceptor, errorInterceptor])),
         {
             provide: MAT_SNACK_BAR_DEFAULT_OPTIONS,
-            useValue: { duration: 3000, horizontalPosition: 'end', verticalPosition: 'top' }
+            useValue: { duration: 3000 }
         },
         {
             provide: MAT_FORM_FIELD_DEFAULT_OPTIONS,
-            useValue: { appearance: 'outline' }
+            useValue: { appearance: 'outline', floatLabel: 'always' }
         }
     ]
 };

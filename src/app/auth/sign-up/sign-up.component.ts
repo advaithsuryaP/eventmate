@@ -23,8 +23,7 @@ import { SNACKBAR_ACTION } from '../../core/app.constants';
         MatFormFieldModule,
         ReactiveFormsModule
     ],
-    templateUrl: './sign-up.component.html',
-    styleUrl: './sign-up.component.css'
+    templateUrl: './sign-up.component.html'
 })
 export default class SignUpComponent {
     showPassword: boolean = false;

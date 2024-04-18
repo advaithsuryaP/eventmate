@@ -1,9 +1,11 @@
-<h2>Sign Up</h2>
-<form [formGroup]="signUpForm" class="d-flex flex-column gap-2">
-    <mat-form-field>
+<div class="mat-headline-4 fw-bold mb-1">Sign Up</div>
+<div class="mat-subtitle-2 mb-4">Already have an account? <a [routerLink]="['/auth', 'sign-in']">Sign in</a></div>
+<form [formGroup]="signUpForm" class="d-flex flex-column gap-3">
+    <mat-form-field floatLabel="always">
         <mat-label>Email</mat-label>
-        <mat-icon matIconPrefix>mail</mat-icon>
-        <input matInput type="email" name="email" formControlName="email" autocomplete="off" />
+        <mat-icon color="primary" matIconPrefix>mail</mat-icon>
+        <input matInput type="email" autocomplete="off" formControlName="email" placeholder="Enter email address" />
+        <mat-hint>Email should be unique</mat-hint>
         <mat-error>
             @if(controls.email.hasError('required')){ This is a required field } @else { Please enter a valid email }
         </mat-error>
@@ -11,22 +13,22 @@
 
     <mat-form-field>
         <mat-label>Username</mat-label>
-        <mat-icon matIconPrefix>alternate_email</mat-icon>
-        <input matInput type="text" name="username" formControlName="username" autocomplete="off" />
+        <mat-icon color="primary" matIconPrefix>alternate_email</mat-icon>
+        <input matInput type="text" autocomplete="off" formControlName="username" placeholder="Enter username" />
         <mat-error>This is a required field</mat-error>
     </mat-form-field>
 
     <mat-form-field>
         <mat-label>Password</mat-label>
-        <mat-icon matIconPrefix>pin</mat-icon>
+        <mat-icon color="primary" matIconPrefix>pin</mat-icon>
         <input
             matInput
-            name="password"
             autocomplete="off"
             formControlName="password"
+            placeholder="Enter password"
             [type]="showPassword ? 'text' : 'password'" />
         <button matSuffix mat-icon-button (click)="showPassword = !showPassword">
-            <mat-icon> @if(showPassword){ visibility } @else { visibility_off } </mat-icon>
+            <mat-icon color="primary"> @if(showPassword){ visibility } @else { visibility_off } </mat-icon>
         </button>
         <mat-error>
             @if(controls.password.hasError('minlength')) { Password should have more than
@@ -38,10 +40,5 @@
         <span class="fw-medium">Is Admin?</span>
     </mat-checkbox>
 
-    <div class="d-flex justify-content-between align-items-center">
-        <button mat-raised-button color="primary" type="submit" (click)="signUp()" [disabled]="signUpForm.invalid">
-            Sign Up
-        </button>
-        <button type="button" mat-stroked-button routerLink="/auth">Sign In</button>
-    </div>
+    <button mat-raised-button color="primary" type="submit" (click)="signUp()">Sign Up</button>
 </form>
