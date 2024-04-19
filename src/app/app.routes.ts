@@ -39,5 +39,9 @@ export const routes: Routes = [
                 canActivate: [authGuard]
             }
         ]
+    },
+    {
+        path: '**',
+        loadComponent: () => import('./core/components/error-page/error-page.component')
     }
 ];
