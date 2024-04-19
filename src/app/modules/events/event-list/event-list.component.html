@@ -1,6 +1,6 @@
 <div class="d-flex justify-content-between">
     <div class="mat-headline-5">Upcoming Events</div>
-    @if (currentUser) {
+    @if (currentUser && currentUser.isAdmin) {
     <button
         color="primary"
         mat-raised-button

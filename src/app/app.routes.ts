@@ -16,7 +16,8 @@ export const routes: Routes = [
             {
                 path: '',
                 pathMatch: 'full',
-                loadComponent: () => import('./modules/home/home.component')
+                // loadComponent: () => import('./modules/home/home.component')
+                loadChildren: () => import('./modules/events/events.routes')
             },
             {
                 path: 'events',
