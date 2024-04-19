@@ -2,7 +2,7 @@ import { inject } from '@angular/core';
 import { ActivatedRouteSnapshot, ResolveFn, RouterStateSnapshot } from '@angular/router';
 import { DomainService } from '../../modules/domains/domain.service';
 import { Domain, Event } from '../app.models';
-import { catchError, combineLatest } from 'rxjs';
+import { combineLatest } from 'rxjs';
 import { EventService } from '../../modules/events/event.service';
 
 export const appResolver: ResolveFn<[Domain[], Event[]]> = (

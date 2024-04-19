@@ -16,7 +16,6 @@ export const SNACKBAR_ACTION = {
 
 export const ERROR_CODE_MAP = {
     backendUnavailable: 'backendUnavailable'
-    // Backend unavailable. Please contact the administrator.
 };
 
 export const STORAGE_KEY_MAP = {
