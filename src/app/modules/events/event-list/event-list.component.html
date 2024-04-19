@@ -1,0 +1,51 @@
+<div class="d-flex justify-content-between">
+    <div class="mat-headline-5">Upcoming Events</div>
+    @if (currentUser) {
+    <button
+        color="primary"
+        mat-raised-button
+        class="d-flex align-items-center"
+        [routerLink]="['/events', 'create-event']">
+        <mat-icon>library_add</mat-icon>
+        <span>Add Event</span>
+    </button>
+    }
+</div>
+<div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4">
+    @for (event of events; track event._id; let index = $index) {
+    <div class="col">
+        <mat-card class="h-100">
+            <img mat-card-image [src]="event.image" alt="Event Image" />
+            <mat-card-content>
+                <h3 class="mb-2">{{ event.title }}</h3>
+                <p class="text-muted">
+                    {{ event.date | date : 'MMM d, y' }} | {{ event.startTime }} - {{ event.endTime }}
+                </p>
+                <p><strong>Domain:</strong> {{ getDomainNameById(event.domainId) }}</p>
+                <p><strong>Location:</strong> {{ event.location }}</p>
+                <p>{{ event.description }}</p>
+                <p><strong>Attendees:</strong> {{ getAttendeeCountByEventId(event._id) | number }}</p>
+            </mat-card-content>
+            @if (currentUser) {
+            <mat-card-actions class="d-flex justify-content-between">
+                <button mat-raised-button color="primary" (click)="registerEvent(event._id)">Register</button>
+                <!-- <button mat-icon-button color="primary" [routerLink]="['/events', 'edit', event._id]" matTooltip="Edit">
+                        <mat-icon>edit_calendar</mat-icon>
+                    </button> -->
+                @if (currentUser._id === event.creatorId) {
+                <button mat-icon-button color="warn" (click)="deleteEvent(event._id, index)" matTooltip="Delete">
+                    <mat-icon>delete_sweep</mat-icon>
+                </button>
+                }
+            </mat-card-actions>
+            }
+        </mat-card>
+    </div>
+    }
+</div>
+
+@if (events.length === 0) {
+<div class="text-center mt-4">
+    <p>No events found.</p>
+</div>
+}

@@ -29,7 +29,8 @@ export const routes: Routes = [
             },
             {
                 path: 'profile/:userId',
-                loadComponent: () => import('./modules/profile/profile.component')
+                loadComponent: () => import('./modules/profile/profile.component'),
+                canActivate: [authGuard]
             },
             {
                 path: 'register/:eventId',

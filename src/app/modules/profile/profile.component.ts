@@ -56,7 +56,7 @@ export default class ProfileComponent implements OnInit, OnDestroy {
                     const payload: FetchEventsPayload = { userId: currentUser?._id };
                     return combineLatest([
                         this._domainService.domainsObs$,
-                        this._eventService.getEvents(),
+                        this._eventService.eventsObs$,
                         this._registrationService.getRegistrations(payload)
                     ]);
                 }),

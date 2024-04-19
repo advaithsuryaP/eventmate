@@ -19,12 +19,12 @@ export interface CreateEventPayload {
     image: string;
     title: string;
     description: string;
+    creatorId: string;
     domainId: string;
     location: string;
-    date: string;
+    date: Date;
     startTime: string;
     endTime: string;
-    attendees: string[];
 }
 
 export interface RegisterEventPayload {

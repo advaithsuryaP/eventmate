@@ -17,8 +17,10 @@ export interface Event {
     date: string;
     startTime: string;
     endTime: string;
+    adminId: string;
     createdAt: string;
     updatedAt: string;
+    creatorId: string;
 }
 
 export interface Domain {

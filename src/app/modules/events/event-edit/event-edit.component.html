@@ -1,0 +1,83 @@
+<form [formGroup]="eventForm" class="d-flex flex-column gap-3">
+    <mat-form-field>
+        <mat-label>Title</mat-label>
+        <mat-icon matIconPrefix color="primary">title</mat-icon>
+        <input type="text" matInput formControlName="title" autocomplete="off" placeholder="Enter event title" />
+        <mat-error>This is a required field</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Description</mat-label>
+        <mat-icon matIconPrefix color="primary">description</mat-icon>
+        <textarea matInput formControlName="description" autocomplete="off" placeholder="Enter event description">
+        </textarea>
+        <mat-error>This is a required field</mat-error>
+    </mat-form-field>
+
+    <mat-form-field>
+        <mat-label>Location</mat-label>
+        <mat-icon matIconPrefix color="primary">location_on</mat-icon>
+        <input type="text" matInput formControlName="location" autocomplete="off" placeholder="Enter event location" />
+        <mat-error>This is a required field</mat-error>
+    </mat-form-field>
+
+    <div class="d-flex gap-3 align-items-center">
+        <mat-form-field>
+            <mat-label>Date</mat-label>
+            <input
+                matInput
+                autocomplete="off"
+                formControlName="date"
+                [matDatepicker]="datePicker"
+                placeholder="Enter event date" />
+            <mat-datepicker-toggle matIconSuffix [for]="datePicker"></mat-datepicker-toggle>
+            <mat-datepicker #datePicker></mat-datepicker>
+            <mat-error>This is a required field</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>Start Time</mat-label>
+            <mat-icon matIconPrefix color="primary">schedule</mat-icon>
+            <input
+                matInput
+                type="time"
+                autocomplete="off"
+                formControlName="startTime"
+                placeholder="Enter event start-time" />
+            <mat-hint>HH:mm</mat-hint>
+            <mat-error>This is a required field</mat-error>
+        </mat-form-field>
+
+        <mat-form-field>
+            <mat-label>End Time</mat-label>
+            <mat-icon matIconPrefix color="primary">av_timer</mat-icon>
+            <input
+                matInput
+                type="time"
+                autocomplete="off"
+                formControlName="endTime"
+                placeholder="Enter event start-time" />
+            <mat-hint>HH:mm</mat-hint>
+            <mat-error>This is a required field</mat-error>
+        </mat-form-field>
+    </div>
+
+    <mat-radio-group color="primary" formControlName="domainId" aria-label="Chose domain">
+        <label class="mat-subtitle-2">Domain: </label>
+        @for (domain of domains; track domain._id) {
+        <mat-radio-button [value]="domain._id">{{ domain.name }}</mat-radio-button>
+        }
+    </mat-radio-group>
+
+    <mat-chip-set>
+        @for (interest of getDomainInterests(eventForm.value.domainId); track interest) {
+        <mat-chip color="primary" [value]="interest">{{ interest }}</mat-chip>
+        }
+    </mat-chip-set>
+
+    <div class="d-flex">
+        <button type="submit" mat-raised-button color="primary" [disabled]="eventForm.invalid" (click)="createEvent()">
+            Create Event
+        </button>
+    </div>
+</form>

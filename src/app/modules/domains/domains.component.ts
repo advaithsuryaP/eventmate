@@ -74,28 +74,11 @@ export default class DomainsComponent implements OnInit, OnDestroy {
     editDomain(domainId: string) {}
 
     deleteDomain(domainId: string, index: number): void {
-        // this.isLoading = true;
-        // this._registrationService.deleteRegistration(registrationId).subscribe({
-        //     next: response => {
-        //         if (response.data.deletedCount === 1) {
-        //             this._snackbar.open(response.message, SNACKBAR_ACTION.SUCCESS);
-        //             this.registrations.splice(index, 1);
-        //         } else {
-        //             this._snackbar.open('Error while cancelling the registration', SNACKBAR_ACTION.ERROR);
-        //         }
-        //         this.isLoading = false;
-        //     }
-        // });
-
         this.isLoading = true;
-        this._domainService.deleteDomain(domainId).subscribe({
+        this._domainService.deleteDomain(domainId, index).subscribe({
             next: response => {
-                if (response.data.deletedCount === 1) {
-                    this._snackbar.open(response.message, SNACKBAR_ACTION.SUCCESS);
-                    this.domains.splice(index, 1);
-                } else {
-                    this._snackbar.open('Error while deleting domain', SNACKBAR_ACTION.ERROR);
-                }
+                if (response) this._snackbar.open('Domain deleted successfully', SNACKBAR_ACTION.SUCCESS);
+                else this._snackbar.open('Error while deleting domain', SNACKBAR_ACTION.ERROR);
                 this.isLoading = false;
             }
         });

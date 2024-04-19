@@ -1,6 +1,6 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, map, tap } from 'rxjs';
 import { API_URL_MAP } from '../../core/app.constants';
 import { Domain } from '../../core/app.models';
 import { CreateDomainPayload } from '../../core/app.payload';
@@ -35,7 +35,20 @@ export class DomainService {
         );
     }
 
-    deleteDomain(domainId: string): Observable<{ message: string; data: { acknowledged: boolean; deletedCount: number } }> {
-        return this._http.delete<{message: string; data: {acknowledged: boolean; deletedCount: number}}>(`${API_URL_MAP.DOMAINS}/${domainId}`);
+    deleteDomain(domainId: string, index: number): Observable<boolean> {
+        return this._http
+            .delete<{ message: string; data: { acknowledged: boolean; deletedCount: number } }>(
+                `${API_URL_MAP.DOMAINS}/${domainId}`
+            )
+            .pipe(
+                map(response => {
+                    if (response.data.deletedCount === 1) {
+                        this._domains.splice(index, 1);
+                        this._domainsSubject.next(this._domains.slice());
+                        return true;
+                    }
+                    return false;
+                })
+            );
     }
 }

@@ -2,7 +2,7 @@ import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { SignInUserPayload, SignUpUserPayload } from '../core/app.payload';
 import { API_URL_MAP, SNACKBAR_ACTION, STORAGE_KEY_MAP } from '../core/app.constants';
-import { BehaviorSubject, Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, filter, map } from 'rxjs';
 import { Router } from '@angular/router';
 import { User } from '../core/app.models';
 import { MatSnackBar } from '@angular/material/snack-bar';
