@@ -24,7 +24,7 @@ export class HeaderComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<null> = new Subject();
 
     ngOnInit(): void {
-        this._authService.currentUserObs$.pipe(takeUntil(this._unsubscribeAll)).subscribe({
+        this._authService.currentUser$.pipe(takeUntil(this._unsubscribeAll)).subscribe({
             next: currentUser => {
                 this.currentUser = currentUser;
             }

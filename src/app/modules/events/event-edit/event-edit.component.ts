@@ -59,11 +59,11 @@ export default class EventEditComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         combineLatest([
-            this._authService.currentUserObs$.pipe(
+            this._authService.currentUser$.pipe(
                 filter(response => response !== null),
                 map(response => <User>response)
             ),
-            this._domainService.domainsObs$
+            this._domainService.domains$
         ])
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({

@@ -28,14 +28,26 @@
             </mat-card-content>
             @if (currentUser) {
             <mat-card-actions class="d-flex justify-content-between">
-                <button mat-raised-button color="primary" (click)="registerEvent(event._id)">Register</button>
-                <!-- <button mat-icon-button color="primary" [routerLink]="['/events', 'edit', event._id]" matTooltip="Edit">
-                        <mat-icon>edit_calendar</mat-icon>
-                    </button> -->
-                @if (currentUser._id === event.creatorId) {
-                <button mat-icon-button color="warn" (click)="deleteEvent(event._id, index)" matTooltip="Delete">
-                    <mat-icon>delete_sweep</mat-icon>
+                @if (hasUserRegistered(event._id)) {
+                <button mat-icon-button color="primary" matTooltip="Registered">
+                    <mat-icon>event_available</mat-icon>
                 </button>
+                } @else {
+                <button mat-raised-button color="primary" (click)="registerEvent(event._id)">Register</button>
+
+                } @if (currentUser._id === event.creatorId) {
+                <div class="d-flex">
+                    <button
+                        mat-icon-button
+                        color="primary"
+                        [routerLink]="['/events', 'edit', event._id]"
+                        matTooltip="Edit">
+                        <mat-icon>edit_calendar</mat-icon>
+                    </button>
+                    <button mat-icon-button color="warn" (click)="deleteEvent(event._id, index)" matTooltip="Delete">
+                        <mat-icon>delete_sweep</mat-icon>
+                    </button>
+                </div>
                 }
             </mat-card-actions>
             }

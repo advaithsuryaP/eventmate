@@ -11,7 +11,7 @@ import { Event } from '../../core/app.models';
 export class EventService {
     private _events: Event[] = [];
     private _eventsSubject = new BehaviorSubject<Event[]>(this._events);
-    eventsObs$ = this._eventsSubject.asObservable();
+    events$ = this._eventsSubject.asObservable();
 
     private _http = inject(HttpClient);
 

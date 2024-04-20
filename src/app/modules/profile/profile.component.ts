@@ -49,14 +49,14 @@ export default class ProfileComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<null> = new Subject();
     ngOnInit(): void {
         this.isLoading = true;
-        this._authService.currentUserObs$
+        this._authService.currentUser$
             .pipe(
                 switchMap(currentUser => {
                     this.currentUser = currentUser;
                     const payload: FetchEventsPayload = { userId: currentUser?._id };
                     return combineLatest([
-                        this._domainService.domainsObs$,
-                        this._eventService.eventsObs$,
+                        this._domainService.domains$,
+                        this._eventService.events$,
                         this._registrationService.getRegistrations(payload)
                     ]);
                 }),

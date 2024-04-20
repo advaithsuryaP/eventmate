@@ -54,7 +54,7 @@ export default class DomainsComponent implements OnInit, OnDestroy {
     });
 
     ngOnInit(): void {
-        this._domainService.domainsObs$.pipe(takeUntil(this._unsubscribeAll)).subscribe({
+        this._domainService.domains$.pipe(takeUntil(this._unsubscribeAll)).subscribe({
             next: response => (this.domains = response)
         });
     }

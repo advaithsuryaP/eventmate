@@ -57,9 +57,9 @@ export default class EventListComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         combineLatest([
-            this._authService.currentUserObs$,
-            this._domainService.domainsObs$,
-            this._eventService.eventsObs$,
+            this._authService.currentUser$,
+            this._domainService.domains$,
+            this._eventService.events$,
             this._registrationService.getRegistrations({})
         ])
             .pipe(takeUntil(this._unsubscribeAll))
@@ -85,8 +85,9 @@ export default class EventListComponent implements OnInit, OnDestroy {
         return this.domains.find(d => d._id === id)?.name ?? 'Unknown Domain';
     }
 
-    userHasRegistered(v: any) {
-        return true;
+    hasUserRegistered(eventId: string): boolean {
+        const index = this.registrations.findIndex(r => r.eventId === eventId && r.userId === this.currentUser?._id);
+        return index === -1 ? false : true;
     }
 
     deleteEvent(eventId: string, index: number) {

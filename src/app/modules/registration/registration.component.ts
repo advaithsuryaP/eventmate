@@ -46,8 +46,8 @@ export default class RegistrationComponent implements OnInit, OnDestroy {
                 switchMap(paramMap => {
                     const eventId: string = paramMap.get('eventId') ?? '';
                     return combineLatest([
-                        this._authService.currentUserObs$,
-                        this._domainService.domainsObs$,
+                        this._authService.currentUser$,
+                        this._domainService.domains$,
                         this._eventService.getEvent(eventId)
                     ]);
                 }),
