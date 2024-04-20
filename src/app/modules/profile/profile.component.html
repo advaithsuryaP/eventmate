@@ -18,7 +18,7 @@
                 @for (registration of registrations; track registration._id; let index = $index) {
                 <mat-expansion-panel *ngIf="getEventById(registration.eventId) as event">
                     <mat-expansion-panel-header>
-                        <mat-panel-title>{{ index }}. {{ event.title }}</mat-panel-title>
+                        <mat-panel-title>{{ index + 1 }}. {{ event.title }}</mat-panel-title>
                         <mat-panel-description class="d-flex flex-grow-1 justify-content-end">
                             {{ event.date | date }}
                         </mat-panel-description>

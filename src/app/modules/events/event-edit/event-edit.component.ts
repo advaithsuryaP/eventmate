@@ -2,7 +2,7 @@ import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { EventService } from '../event.service';
 import { FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { AuthService } from '../../../auth/auth.service';
-import { Subject, combineLatest, filter, map, takeUntil } from 'rxjs';
+import { Subject, combineLatest, filter, map, switchMap, takeUntil, tap } from 'rxjs';
 import { DomainService } from '../../domains/domain.service';
 import { Domain, User } from '../../../core/app.models';
 import { MatFormFieldModule } from '@angular/material/form-field';
@@ -14,7 +14,7 @@ import { MatChipsModule } from '@angular/material/chips';
 import { CreateEventPayload } from '../../../core/app.payload';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
-import { Router } from '@angular/router';
+import { ActivatedRoute, Router } from '@angular/router';
 
 @Component({
     selector: 'app-event-edit',
@@ -35,6 +35,7 @@ import { Router } from '@angular/router';
 export default class EventEditComponent implements OnInit, OnDestroy {
     private _router = inject(Router);
     private _fb = inject(FormBuilder);
+    private _route = inject(ActivatedRoute);
     private _authService = inject(AuthService);
     private _eventService = inject(EventService);
     private _domainService = inject(DomainService);
@@ -58,20 +59,28 @@ export default class EventEditComponent implements OnInit, OnDestroy {
     });
 
     ngOnInit(): void {
+        this._route.paramMap
+            .pipe(
+                switchMap(paramMap => {
+                    const eventId: string = paramMap.get('eventdId') ?? '';
+                    return this._eventService.getEvent(eventId);
+                })
+            )
+            .subscribe({
+                next: response => {
+                    console.log(response);
+                }
+            });
         combineLatest([
             this._authService.currentUser$.pipe(
                 filter(response => response !== null),
-                map(response => <User>response)
+                map(response => <User>response),
+                tap(response => this.eventForm.patchValue({ creatorId: response._id }))
             ),
-            this._domainService.domains$
+            this._domainService.domains$.pipe(tap(response => (this.domains = response)))
         ])
             .pipe(takeUntil(this._unsubscribeAll))
-            .subscribe({
-                next: ([user, domains]) => {
-                    this.eventForm.patchValue({ creatorId: user._id });
-                    this.domains = domains;
-                }
-            });
+            .subscribe();
     }
 
     getDomainInterests(domainId: string | undefined): string[] {
