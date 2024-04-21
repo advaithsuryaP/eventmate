@@ -1,37 +1,35 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { AuthService } from '../../auth/auth.service';
-import { Domain, Event, Registration, User } from '../../core/app.models';
-import { Subject, combineLatest, switchMap, takeUntil } from 'rxjs';
-import { DatePipe, NgIf, TitleCasePipe } from '@angular/common';
-import { RegistrationService } from '../registration/registration.service';
-import { FetchEventsPayload } from '../../core/app.payload';
-
-import { MatExpansionModule } from '@angular/material/expansion';
-import { MatIconModule } from '@angular/material/icon';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Subject, switchMap, combineLatest, takeUntil } from 'rxjs';
+import { AuthService } from '../../../auth/auth.service';
+import { SNACKBAR_ACTION } from '../../../core/app.constants';
+import { User, Domain, Registration, Event } from '../../../core/app.models';
+import { FetchEventsPayload } from '../../../core/app.payload';
+import { DomainService } from '../../domains/domain.service';
+import { EventService } from '../../events/event.service';
+import { RegistrationService } from '../../registration/registration.service';
+import { TitleCasePipe, DatePipe, NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { EventService } from '../events/event.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
-import { DomainService } from '../domains/domain.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { SNACKBAR_ACTION } from '../../core/app.constants';
+import { MatExpansionModule } from '@angular/material/expansion';
+import { MatIconModule } from '@angular/material/icon';
 
 @Component({
-    selector: 'app-profile',
     standalone: true,
     imports: [
         NgIf,
-        TitleCasePipe,
         DatePipe,
-        MatExpansionModule,
+        TitleCasePipe,
         MatIconModule,
+        MatChipsModule,
         MatButtonModule,
         MatCheckboxModule,
-        MatChipsModule
+        MatExpansionModule
     ],
-    templateUrl: './profile.component.html'
+    templateUrl: './user-detail.component.html'
 })
-export default class ProfileComponent implements OnInit, OnDestroy {
+export default class UserDetailComponent implements OnInit, OnDestroy {
     isLoading: boolean = false;
 
     currentUser: User | null = null;
@@ -47,6 +45,7 @@ export default class ProfileComponent implements OnInit, OnDestroy {
     private _registrationService = inject(RegistrationService);
 
     private _unsubscribeAll: Subject<null> = new Subject();
+
     ngOnInit(): void {
         this.isLoading = true;
         this._authService.currentUser$
