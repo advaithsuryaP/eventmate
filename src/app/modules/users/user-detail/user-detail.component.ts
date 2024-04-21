@@ -1,29 +1,36 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { MatSnackBar } from '@angular/material/snack-bar';
-import { Subject, switchMap, combineLatest, takeUntil } from 'rxjs';
+import { Subject, switchMap, combineLatest, takeUntil, filter, map } from 'rxjs';
 import { AuthService } from '../../../auth/auth.service';
 import { SNACKBAR_ACTION } from '../../../core/app.constants';
 import { User, Domain, Registration, Event } from '../../../core/app.models';
-import { FetchEventsPayload } from '../../../core/app.payload';
 import { DomainService } from '../../domains/domain.service';
 import { EventService } from '../../events/event.service';
-import { RegistrationService } from '../../registration/registration.service';
 import { TitleCasePipe, DatePipe, NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipsModule } from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
+import { RegistrationService } from '../../registration/registration.service';
+import { GetEventMatesPayload } from '../../../core/app.payload';
+import { MatDividerModule } from '@angular/material/divider';
+import { MatCardModule } from '@angular/material/card';
+import { RouterLink } from '@angular/router';
 
 @Component({
     standalone: true,
     imports: [
         NgIf,
         DatePipe,
+        RouterLink,
+        MatCardModule,
+        MatIconModule,
         TitleCasePipe,
         MatIconModule,
         MatChipsModule,
         MatButtonModule,
+        MatDividerModule,
         MatCheckboxModule,
         MatExpansionModule
     ],
@@ -32,7 +39,7 @@ import { MatIconModule } from '@angular/material/icon';
 export default class UserDetailComponent implements OnInit, OnDestroy {
     isLoading: boolean = false;
 
-    currentUser: User | null = null;
+    currentUser!: User;
 
     events: Event[] = [];
     domains: Domain[] = [];
@@ -50,13 +57,14 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
         this.isLoading = true;
         this._authService.currentUser$
             .pipe(
+                filter(response => response !== null),
+                map(response => <User>response),
                 switchMap(currentUser => {
                     this.currentUser = currentUser;
-                    const payload: FetchEventsPayload = { userId: currentUser?._id };
                     return combineLatest([
                         this._domainService.domains$,
                         this._eventService.events$,
-                        this._registrationService.getRegistrations(payload)
+                        this._registrationService.fetchUserRegistrations(this.currentUser._id)
                     ]);
                 }),
                 takeUntil(this._unsubscribeAll)
@@ -95,6 +103,19 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
     }
 
     updateInterest(): void {}
+
+    getEventMates(eventId: string, interests: string[]): void {
+        const payload: GetEventMatesPayload = {
+            userId: this.currentUser._id,
+            eventId: eventId,
+            interests: interests
+        };
+        this._registrationService.fetchEventMates(payload).subscribe({
+            next: response => {
+                console.log(response);
+            }
+        });
+    }
 
     ngOnDestroy(): void {
         this._unsubscribeAll.next(null);

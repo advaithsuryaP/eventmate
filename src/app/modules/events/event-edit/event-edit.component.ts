@@ -106,7 +106,7 @@ export default class EventEditComponent implements OnInit, OnDestroy {
         return interests;
     }
 
-    createEvent(): void {
+    saveEvent(): void {
         if (this.eventForm.valid) {
             const payload: CreateEventPayload = this.eventForm.getRawValue();
             if (!this.isEditMode) {

@@ -1,9 +1,12 @@
-import { Injectable } from '@angular/core';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { Injectable, inject } from '@angular/core';
+import { API_URL_MAP } from '../../core/app.constants';
+import { Registration } from '../../core/app.models';
+import { Observable, map } from 'rxjs';
 
 @Injectable({
-  providedIn: 'root'
+    providedIn: 'root'
 })
 export class UserService {
-
-  constructor() { }
+    private _http = inject(HttpClient);
 }

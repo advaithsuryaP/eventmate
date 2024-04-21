@@ -10,7 +10,7 @@ import { CreateDomainPayload } from '../../core/app.payload';
 })
 export class DomainService {
     private _domains: Domain[] = [];
-    private _domainsSubject = new BehaviorSubject<Domain[]>(this._domains);
+    private _domainsSubject = new BehaviorSubject<Domain[]>([]);
     domains$ = this._domainsSubject.asObservable();
 
     private _http = inject(HttpClient);

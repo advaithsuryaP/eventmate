@@ -60,7 +60,7 @@ export default class EventListComponent implements OnInit, OnDestroy {
             this._authService.currentUser$,
             this._domainService.domains$,
             this._eventService.events$,
-            this._registrationService.getRegistrations({})
+            this._registrationService.registrations$
         ])
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({

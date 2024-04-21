@@ -10,7 +10,7 @@ import { Event } from '../../core/app.models';
 })
 export class EventService {
     private _events: Event[] = [];
-    private _eventsSubject = new BehaviorSubject<Event[]>(this._events);
+    private _eventsSubject = new BehaviorSubject<Event[]>([]);
     events$ = this._eventsSubject.asObservable();
 
     private _http = inject(HttpClient);

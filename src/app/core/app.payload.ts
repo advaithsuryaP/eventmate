@@ -34,7 +34,8 @@ export interface RegisterEventPayload {
     interests: string[];
 }
 
-export interface FetchEventsPayload {
-    userId?: string;
-    eventId?: string;
+export interface GetEventMatesPayload {
+    userId: string;
+    eventId: string;
+    interests: string[];
 }
