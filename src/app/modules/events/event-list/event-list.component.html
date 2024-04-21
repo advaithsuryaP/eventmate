@@ -28,23 +28,42 @@
             </mat-card-content>
             @if (currentUser) {
             <mat-card-actions class="d-flex justify-content-between">
+                <!--
+                    Button to show if the user has already registered for the event
+                    Show this if the current user has registered for the event
+                 -->
                 @if (hasUserRegistered(event._id)) {
                 <button mat-icon-button color="primary" matTooltip="Registered">
                     <mat-icon>event_available</mat-icon>
                 </button>
-                } @else {
-                <button mat-raised-button color="primary" (click)="registerEvent(event._id)">Register</button>
+                }
 
-                } @if (currentUser._id === event.creatorId) {
+                <!--
+                    Button to register for an event
+                    Show this if the user is not registered for the event and is not the admin for the event
+                 -->
+                @if (!hasUserRegistered(event._id) && currentUser._id !== event.creatorId) {
+                <button mat-raised-button color="primary" (click)="registerEvent(event._id)">Register</button>
+                }
+
+                <!--
+                    Buttons to edit and cancel the event
+                    Show these buttons to the admin users of the event
+                 -->
+                @if (currentUser._id === event.creatorId) {
                 <div class="d-flex">
                     <button
                         mat-icon-button
                         color="primary"
                         [routerLink]="['/events', 'edit', event._id]"
-                        matTooltip="Edit">
+                        matTooltip="Update Event">
                         <mat-icon>edit_calendar</mat-icon>
                     </button>
-                    <button mat-icon-button color="warn" (click)="deleteEvent(event._id, index)" matTooltip="Delete">
+                    <button
+                        mat-icon-button
+                        color="warn"
+                        (click)="deleteEvent(event._id, index)"
+                        matTooltip="Cancel Event">
                         <mat-icon>delete_sweep</mat-icon>
                     </button>
                 </div>

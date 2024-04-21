@@ -22,7 +22,7 @@ export interface CreateEventPayload {
     creatorId: string;
     domainId: string;
     location: string;
-    date: Date;
+    date: string;
     startTime: string;
     endTime: string;
 }

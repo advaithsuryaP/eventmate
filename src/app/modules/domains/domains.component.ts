@@ -6,9 +6,9 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatInputModule } from '@angular/material/input';
 import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
-import { Domain } from '../../core/app.models';
+import { Domain, User } from '../../core/app.models';
 import { NgFor, UpperCasePipe } from '@angular/common';
-import { Subject, takeUntil } from 'rxjs';
+import { Subject, combineLatest, takeUntil, tap } from 'rxjs';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DomainService } from './domain.service';
 import { CreateDomainPayload } from '../../core/app.payload';
@@ -17,6 +17,7 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { SNACKBAR_ACTION } from '../../core/app.constants';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule } from '@angular/material/paginator';
+import { AuthService } from '../../auth/auth.service';
 
 @Component({
     selector: 'app-domains',
@@ -37,13 +38,15 @@ import { MatPaginatorModule } from '@angular/material/paginator';
     templateUrl: './domains.component.html'
 })
 export default class DomainsComponent implements OnInit, OnDestroy {
-    isLoading: boolean = false;
     domains: Domain[] = [];
+    currentUser: User | null = null;
+    isLoading: boolean = false;
 
     readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
     private _snackbar = inject(MatSnackBar);
     private announcer = inject(LiveAnnouncer);
+    private _authService = inject(AuthService);
     private _domainService = inject(DomainService);
     private _unsubscribeAll: Subject<null> = new Subject();
 
@@ -54,9 +57,12 @@ export default class DomainsComponent implements OnInit, OnDestroy {
     });
 
     ngOnInit(): void {
-        this._domainService.domains$.pipe(takeUntil(this._unsubscribeAll)).subscribe({
-            next: response => (this.domains = response)
-        });
+        combineLatest([
+            this._authService.currentUser$.pipe(tap(response => (this.currentUser = response))),
+            this._domainService.domains$.pipe(tap(response => (this.domains = response)))
+        ])
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe();
     }
 
     getIndexBgColor(index: number): string {

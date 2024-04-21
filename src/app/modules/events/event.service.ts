@@ -35,12 +35,23 @@ export class EventService {
             .pipe(map(response => response.data));
     }
 
-    createEvent(payload: CreateEventPayload): Observable<Event> {
+    createEvent(payload: CreateEventPayload): Observable<string> {
         return this._http.post<{ message: string; data: Event }>(API_URL_MAP.EVENTS, payload).pipe(
             map(response => {
                 this._events.push(response.data);
                 this._eventsSubject.next(this._events.slice());
-                return response.data;
+                return response.message;
+            })
+        );
+    }
+
+    updateEvent(eventId: string, payload: CreateEventPayload): Observable<string> {
+        return this._http.put<{ message: string; data: Event }>(`${API_URL_MAP.EVENTS}/${eventId}`, payload).pipe(
+            map(response => {
+                const indexToUpdate = this._events.findIndex(e => e._id == eventId);
+                this._events[indexToUpdate] = response.data;
+                this._eventsSubject.next(this._events.slice());
+                return response.message;
             })
         );
     }

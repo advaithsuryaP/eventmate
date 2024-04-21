@@ -79,6 +79,7 @@
                                     }
                                 </div>
                             </div>
+                            @if (currentUser?.isAdmin) {
                             <div class="d-flex">
                                 <button mat-icon-button color="primary">
                                     <mat-icon>edit</mat-icon>
@@ -87,6 +88,7 @@
                                     <mat-icon>delete</mat-icon>
                                 </button>
                             </div>
+                            }
                         </li>
                         }
                     </ol>
