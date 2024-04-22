@@ -11,7 +11,19 @@ import { Event } from '../../core/app.models';
 export class EventService {
     private _events: Event[] = [];
     private _eventsSubject = new BehaviorSubject<Event[]>([]);
-    events$ = this._eventsSubject.asObservable();
+    events$ = this._eventsSubject.asObservable().pipe(
+        map(event =>
+            event.map(e => {
+                const daysLeftForEventToStart: number = this.calculateRamainingDaysToEvent(e);
+                return {
+                    ...e,
+                    eventStartsIn: daysLeftForEventToStart,
+                    registrationClosesIn: daysLeftForEventToStart - 1,
+                    isRegistrationClosed: daysLeftForEventToStart <= 1
+                };
+            })
+        )
+    );
 
     private _http = inject(HttpClient);
 
@@ -71,5 +83,18 @@ export class EventService {
                     return false;
                 })
             );
+    }
+
+    private calculateRamainingDaysToEvent(event: Event): number {
+        const eventDate: Date = new Date(event.date);
+        const today = new Date();
+
+        // getTime() returns the number of milliseconds since January 1, 1970, 00:00:00 UTC.
+        const timeDiffInMilliSeconds = eventDate.getTime() - today.getTime();
+        // Convert milliseconds to days by dividing by the number of milliseconds in a day
+        const dayInMilliSeconds = 1000 * 60 * 60 * 24;
+        const differenceInDays = timeDiffInMilliSeconds / dayInMilliSeconds;
+
+        return Math.floor(differenceInDays);
     }
 }

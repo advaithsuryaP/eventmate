@@ -1,6 +1,7 @@
 import { environment } from '../../environments/environment';
 
 export const API_URL_MAP = {
+    USERS: `${environment.API_URL}/users`,
     EVENTS: `${environment.API_URL}/events`,
     DOMAINS: `${environment.API_URL}/domains`,
     SIGNIN_USER: `${environment.API_URL}/users/signin`,

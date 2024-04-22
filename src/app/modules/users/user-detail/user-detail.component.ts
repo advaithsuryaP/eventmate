@@ -9,7 +9,7 @@ import { EventService } from '../../events/event.service';
 import { TitleCasePipe, DatePipe, NgIf } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
-import { MatChipsModule } from '@angular/material/chips';
+import { MatChipListboxChange, MatChipsModule } from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { RegistrationService } from '../../registration/registration.service';
@@ -38,8 +38,10 @@ import { RouterLink } from '@angular/router';
 })
 export default class UserDetailComponent implements OnInit, OnDestroy {
     isLoading: boolean = false;
+    isInterestChanged: boolean = false;
 
     currentUser!: User;
+    eventMates: Registration[] = [];
 
     events: Event[] = [];
     domains: Domain[] = [];
@@ -100,6 +102,30 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
                 this.isLoading = false;
             }
         });
+    }
+
+    /**
+     * Reset the registration to the initial state
+     */
+    openPanelEvent(): void {
+        this.eventMates = [];
+        this.isInterestChanged = false;
+    }
+
+    onChangeInterest(event: MatChipListboxChange) {
+        if (event.value) {
+            this.isInterestChanged = true;
+        }
+    }
+
+    canUserChangeInterest(event: Event): boolean {
+        let result = true;
+        const eventDate: Date = new Date(event.date);
+        const today = new Date();
+
+        // console.log('Event Date: ', eventDate);
+        // console.log('Today: ', today);
+        return result;
     }
 
     updateInterest(): void {}

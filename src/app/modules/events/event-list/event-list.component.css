@@ -1,0 +1,30 @@
+/* :host ::ng-deep .mat-mdc-card-header {
+    padding: 12px 12px 4px;
+} */
+
+.event-card {
+    height: 100%;
+}
+
+.event-card .event-card__header {
+    display: flex;
+    flex-direction: column;
+    padding: 12px 12px 8px;
+    border-top-left-radius: 0.5rem;
+    border-top-right-radius: 0.5rem;
+}
+
+.event-card .event-card__title {
+    color: var(--primary);
+}
+
+.event-card .event-card__content {
+    padding: 8px;
+}
+
+.event-card .event-card__actions {
+    /* padding: 0; */
+    /* min-height: auto; */
+    display: flex;
+    justify-content: space-between;
+}

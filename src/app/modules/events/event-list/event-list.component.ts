@@ -6,7 +6,7 @@ import { DomainService } from '../../domains/domain.service';
 import { RegistrationService } from '../../registration/registration.service';
 import { EventService } from '../event.service';
 import { Domain, Event, Registration, User } from '../../../core/app.models';
-import { DatePipe, DecimalPipe } from '@angular/common';
+import { DatePipe, DecimalPipe, UpperCasePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatNativeDateModule } from '@angular/material/core';
@@ -19,6 +19,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SNACKBAR_ACTION } from '../../../core/app.constants';
+import { UserService } from '../../users/user.service';
 
 @Component({
     selector: 'app-event-list',
@@ -29,6 +30,7 @@ import { SNACKBAR_ACTION } from '../../../core/app.constants';
         DecimalPipe,
         MatCardModule,
         MatIconModule,
+        UpperCasePipe,
         MatListModule,
         MatInputModule,
         MatButtonModule,
@@ -38,9 +40,11 @@ import { SNACKBAR_ACTION } from '../../../core/app.constants';
         MatNativeDateModule,
         MatDatepickerModule
     ],
-    templateUrl: './event-list.component.html'
+    templateUrl: './event-list.component.html',
+    styleUrl: './event-list.component.css'
 })
 export default class EventListComponent implements OnInit, OnDestroy {
+    users: User[] = [];
     events: Event[] = [];
     domains: Domain[] = [];
     registrations: Registration[] = [];
@@ -49,6 +53,7 @@ export default class EventListComponent implements OnInit, OnDestroy {
     private _router = inject(Router);
     private _snackbar = inject(MatSnackBar);
     private _authService = inject(AuthService);
+    private _userService = inject(UserService);
     private _eventService = inject(EventService);
     private _domainService = inject(DomainService);
     private _registrationService = inject(RegistrationService);
@@ -57,6 +62,7 @@ export default class EventListComponent implements OnInit, OnDestroy {
 
     ngOnInit(): void {
         combineLatest([
+            this._userService.users$,
             this._authService.currentUser$,
             this._domainService.domains$,
             this._eventService.events$,
@@ -64,7 +70,8 @@ export default class EventListComponent implements OnInit, OnDestroy {
         ])
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
-                next: ([currentUser, domains, events, registrations]) => {
+                next: ([users, currentUser, domains, events, registrations]) => {
+                    this.users = users;
                     this.currentUser = currentUser;
                     this.domains = domains;
                     this.events = events;
@@ -81,8 +88,12 @@ export default class EventListComponent implements OnInit, OnDestroy {
         return count;
     }
 
-    getDomainNameById(id: string): string {
-        return this.domains.find(d => d._id === id)?.name ?? 'Unknown Domain';
+    getDomainNameById(domainId: string): string {
+        return this.domains.find(d => d._id === domainId)?.name ?? 'Unknown Domain';
+    }
+
+    getUsernameById(userId: string): string {
+        return this.users.find(u => u._id === userId)?.username ?? 'Unknown User';
     }
 
     hasUserRegistered(eventId: string): boolean {

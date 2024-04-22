@@ -36,7 +36,9 @@
                 @if(registrations.length > 0) {
                 <mat-accordion>
                     @for (registration of registrations; track registration._id; let index = $index) {
-                    <mat-expansion-panel *ngIf="getEventById(registration.eventId) as event">
+                    <mat-expansion-panel
+                        *ngIf="getEventById(registration.eventId) as event"
+                        (opened)="openPanelEvent()">
                         <mat-expansion-panel-header>
                             <mat-panel-title>{{ index + 1 }}. {{ event.title }}</mat-panel-title>
                             <mat-panel-description class="d-flex flex-grow-1 justify-content-end">
@@ -47,16 +49,18 @@
                             <div class="card-text">{{ event.description }}</div>
                             <div class="d-flex flex-column">
                                 <div class="fw-medium">Interests:</div>
-                                <mat-chip-listbox>
+                                <mat-chip-listbox (change)="onChangeInterest($event)">
                                     @if (getDomainById(registration.domainId); as domain) { @for (interest of
                                     domain.interests; track $index) {
 
                                     <mat-chip-option
                                         color="primary"
+                                        [value]="interest"
+                                        [selectable]="!event.isRegistrationClosed"
                                         [selected]="registration.interests.includes(interest)">
                                         {{ interest }}
                                     </mat-chip-option>
-                                    }}
+                                    } }
                                 </mat-chip-listbox>
                             </div>
                         </div>
@@ -67,9 +71,15 @@
                                 (click)="cancelRegistration(registration._id, index)">
                                 Cancel
                             </button>
-                            <button mat-raised-button color="primary" (click)="updateInterest()" disabled>
+                            @if (!event.isRegistrationClosed) {
+                            <button
+                                mat-raised-button
+                                color="primary"
+                                (click)="updateInterest()"
+                                [disabled]="!isInterestChanged">
                                 Update
                             </button>
+                            }
                             <button
                                 mat-raised-button
                                 color="primary"

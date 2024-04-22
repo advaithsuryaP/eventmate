@@ -10,12 +10,7 @@ body {
 }
 
 :root {
-    --background-color-1: #212529;
-    --text-primary: #3f51b5;
-}
-
-.bg-login {
-    background-color: var(--background-color-1);
+    --primary: #3f51b5;
 }
 
 a {
@@ -23,5 +18,9 @@ a {
 }
 
 .text-primary {
-    color: var(--text-primary) !important;
+    color: var(--primary) !important;
+}
+
+.bg-primary {
+    background-color: var(--primary) !important;
 }

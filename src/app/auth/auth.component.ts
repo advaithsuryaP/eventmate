@@ -5,6 +5,7 @@ import { RouterOutlet } from '@angular/router';
 @Component({
     standalone: true,
     imports: [RouterOutlet, MatCardModule],
-    templateUrl: './auth.component.html'
+    templateUrl: './auth.component.html',
+    styleUrl: './auth.component.css'
 })
 export default class AuthComponent {}
