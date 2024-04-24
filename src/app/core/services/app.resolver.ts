@@ -12,9 +12,9 @@ export const appResolver: ResolveFn<[User[], Event[], Domain[], Registration[]]>
     state: RouterStateSnapshot
 ) => {
     return combineLatest([
-        inject(UserService).getUsers(),
+        inject(UserService).fetchUsers(),
         inject(EventService).getEvents(),
         inject(DomainService).getDomains(),
-        inject(RegistrationService).getRegistrations()
+        inject(RegistrationService).fetchRegistrations()
     ]);
 };

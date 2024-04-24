@@ -46,3 +46,11 @@ export interface Registration {
     createdAt: string;
     updatedAt: string;
 }
+
+export interface Feedback {
+    id: string;
+    userId: string;
+    eventId: string;
+    comment: string;
+    rating: number;
+}

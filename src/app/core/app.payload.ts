@@ -39,3 +39,10 @@ export interface GetEventMatesPayload {
     eventId: string;
     interests: string[];
 }
+
+export interface SubmitFeedbackPayload {
+    userId: string;
+    eventId: string;
+    comment: string;
+    rating: number;
+}

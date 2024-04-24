@@ -4,6 +4,9 @@ export const API_URL_MAP = {
     USERS: `${environment.API_URL}/users`,
     EVENTS: `${environment.API_URL}/events`,
     DOMAINS: `${environment.API_URL}/domains`,
+    FEEDBACKS: `${environment.API_URL}/feedbacks`,
+    GET_USER_FEEDBACK: `${environment.API_URL}/feedbacks/user`,
+    GET_EVENT_FEEDBACK: `${environment.API_URL}/feedbacks/event`,
     SIGNIN_USER: `${environment.API_URL}/users/signin`,
     SIGNUP_USER: `${environment.API_URL}/users/signup`,
     REGISTRATIONS: `${environment.API_URL}/registrations`

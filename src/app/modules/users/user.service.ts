@@ -1,8 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { API_URL_MAP } from '../../core/app.constants';
-import { User } from '../../core/app.models';
+import { Feedback, Registration, User } from '../../core/app.models';
 import { BehaviorSubject, Observable, map } from 'rxjs';
+import { SubmitFeedbackPayload } from '../../core/app.payload';
 
 @Injectable({
     providedIn: 'root'
@@ -14,7 +15,7 @@ export class UserService {
 
     private _http = inject(HttpClient);
 
-    getUsers(): Observable<User[]> {
+    fetchUsers(): Observable<User[]> {
         return this._http.get<{ message: string; data: User[] }>(API_URL_MAP.USERS).pipe(
             map(response => {
                 this._users = response.data;
@@ -22,5 +23,29 @@ export class UserService {
                 return response.data;
             })
         );
+    }
+
+    submitFeedback(payload: SubmitFeedbackPayload): Observable<string> {
+        return this._http
+            .post<{ message: string; data: Feedback }>(API_URL_MAP.FEEDBACKS, payload)
+            .pipe(map(response => response.message));
+    }
+
+    fetchUserRegistrations$(userId: string): Observable<Registration[]> {
+        let httpParams = new HttpParams();
+        httpParams = httpParams.append('userId', userId);
+        return this._http
+            .get<{ message: string; data: Registration[] }>(API_URL_MAP.REGISTRATIONS, {
+                params: httpParams
+            })
+            .pipe(map(response => response.data));
+    }
+
+    fetchUserFeedback$(userId: string): Observable<Feedback[]> {
+        let httpParams = new HttpParams();
+        httpParams = httpParams.append('userId', userId);
+        return this._http
+            .get<{ message: string; data: Feedback[] }>(API_URL_MAP.GET_USER_FEEDBACK, { params: httpParams })
+            .pipe(map(response => response.data));
     }
 }
