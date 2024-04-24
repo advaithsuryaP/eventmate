@@ -25,7 +25,7 @@ export class RegistrationService {
         );
     }
 
-    getRegistrations(): Observable<Registration[]> {
+    fetchRegistrations(): Observable<Registration[]> {
         return this._http.get<{ message: string; data: Registration[] }>(`${API_URL_MAP.REGISTRATIONS}`).pipe(
             map(response => {
                 this._registrations = response.data;
@@ -33,16 +33,6 @@ export class RegistrationService {
                 return response.data;
             })
         );
-    }
-
-    fetchUserRegistrations(userId: string): Observable<Registration[]> {
-        let httpParams = new HttpParams();
-        httpParams = httpParams.append('userId', userId);
-        return this._http
-            .get<{ message: string; data: Registration[] }>(API_URL_MAP.REGISTRATIONS, {
-                params: httpParams
-            })
-            .pipe(map(response => response.data));
     }
 
     fetchEventRegistrations(eventId: string): Observable<Registration[]> {

@@ -2,53 +2,101 @@
 <div class="my-4"></div>
 <div class="row">
     <div class="col-lg-4">
-        <mat-card>
-            <mat-card-header>
-                <mat-card-subtitle class="text-primary fw-bolder">PROFILE INFORMATION</mat-card-subtitle>
-            </mat-card-header>
-            <mat-card-content>
-                <div class="d-flex flex-column w-50">
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="mat-subtitle-2">Username:</div>
-                        <div class="mat-body-2">{{ currentUser.username }}</div>
+        <div class="d-flex flex-column gap-4">
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-subtitle class="text-primary mat-headline-6">PROFILE INFORMATION</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    <div class="d-flex flex-column w-50">
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="mat-subtitle-2">Username:</div>
+                            <div class="mat-body-2">{{ currentUser.username }}</div>
+                        </div>
+                        <div class="d-flex align-items-center gap-2">
+                            <div class="mat-subtitle-2">Email:</div>
+                            <div class="mat-body-2">{{ currentUser.email }}</div>
+                        </div>
+                        <div class="d-flex align-items-center gap-1">
+                            <div class="mat-subtitle-2">Is Admin:</div>
+                            <mat-icon [class]="[currentUser.isAdmin ? 'text-success' : 'text-danger']">{{
+                                currentUser.isAdmin ? 'check_box' : 'disabled_by_default'
+                            }}</mat-icon>
+                        </div>
                     </div>
-                    <div class="d-flex align-items-center gap-2">
-                        <div class="mat-subtitle-2">Email:</div>
-                        <div class="mat-body-2">{{ currentUser.email }}</div>
+                </mat-card-content>
+                <mat-card-actions align="end">
+                    <button mat-button color="accent">UPDATE</button>
+                </mat-card-actions>
+            </mat-card>
+
+            <mat-card>
+                <mat-card-header>
+                    <mat-card-subtitle class="text-primary mat-headline-6">FEEDBACKS</mat-card-subtitle>
+                </mat-card-header>
+                <mat-card-content>
+                    @if (feedbacks.length > 0) { @for (feedback of feedbacks; track $index) {
+                    <div class="row">
+                        <div class="col-md-4">{{ getEventTitleById(feedback.eventId) | titlecase }}</div>
                     </div>
-                    <div class="d-flex align-items-center gap-1">
-                        <div class="mat-subtitle-2">Is Admin:</div>
-                        <mat-icon [class]="[currentUser.isAdmin ? 'text-success' : 'text-danger']">{{
-                            currentUser.isAdmin ? 'check_box' : 'disabled_by_default'
-                        }}</mat-icon>
+                    } } @else {
+                    <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+                        <mat-icon>error</mat-icon>
+                        <div class="mat-body-2">No feedbacks yet!</div>
                     </div>
-                </div>
-            </mat-card-content>
-        </mat-card>
+                    }
+                </mat-card-content>
+            </mat-card>
+        </div>
     </div>
 
     <div class="col-lg-8">
         <mat-card>
             <mat-card-header>
-                <mat-card-subtitle class="text-primary fw-bolder">REGISTRATIONS</mat-card-subtitle>
+                <mat-card-subtitle class="text-primary mat-headline-6">REGISTRATIONS</mat-card-subtitle>
             </mat-card-header>
             <mat-card-content class="my-2">
                 @if(registrations.length > 0) {
                 <mat-accordion>
                     @for (registration of registrations; track registration._id; let index = $index) {
-                    <mat-expansion-panel
-                        *ngIf="getEventById(registration.eventId) as event"
-                        (opened)="openPanelEvent()">
+                    @if(getEventById(registration.eventId); as event) {
+                    <mat-expansion-panel (opened)="openPanelEvent()" hideToggle>
                         <mat-expansion-panel-header>
-                            <mat-panel-title>{{ index + 1 }}. {{ event.title }}</mat-panel-title>
+                            <mat-panel-title>{{ index + 1 }}. {{ event.title | uppercase }}</mat-panel-title>
                             <mat-panel-description class="d-flex flex-grow-1 justify-content-end">
-                                {{ event.date | date }}
+                                <mat-icon
+                                    [class]="event.isRegistrationClosed ? 'text-success' : 'text-primary'"
+                                    [matTooltip]="
+                                        event.isRegistrationClosed ? 'Event Mates Available' : 'Registration Open'
+                                    ">
+                                    {{ event.isRegistrationClosed ? 'published_with_changes' : 'event_available' }}
+                                </mat-icon>
                             </mat-panel-description>
                         </mat-expansion-panel-header>
-                        <div class="d-flex flex-column gap-1">
-                            <div class="card-text">{{ event.description }}</div>
-                            <div class="d-flex flex-column">
-                                <div class="fw-medium">Interests:</div>
+                        <div class="d-flex flex-column gap-3">
+                            <!-- Date -->
+                            <div class="d-flex align-items-center gap-2">
+                                <mat-icon color="primary">event</mat-icon>
+                                <div class="mat-subtitle-2">
+                                    {{ event.date | date : 'fullDate' }}, {{ event.startTime }} - {{ event.endTime }}
+                                </div>
+                            </div>
+
+                            <!-- Location -->
+                            <div class="d-flex align-items-center gap-2">
+                                <mat-icon color="primary">location_on</mat-icon>
+                                <div class="mat-subtitle-2">{{ event.location }}</div>
+                            </div>
+
+                            <!-- Description -->
+                            <div class="d-flex align-items-center gap-2">
+                                <mat-icon color="primary">segment</mat-icon>
+                                <div class="mat-body-2">{{ event.description }}</div>
+                            </div>
+
+                            <!-- Interests -->
+                            <div class="d-flex align-items-center gap-2">
+                                <mat-icon color="primary">interests</mat-icon>
                                 <mat-chip-listbox (change)="onChangeInterest($event)">
                                     @if (getDomainById(registration.domainId); as domain) { @for (interest of
                                     domain.interests; track $index) {
@@ -63,6 +111,32 @@
                                     } }
                                 </mat-chip-listbox>
                             </div>
+
+                            @if (eventMates.length) {
+                            <div class="card">
+                                <div class="card-header">
+                                    <div class="d-flex align-items-center gap-2">
+                                        <mat-icon color="primary">flaky</mat-icon>
+                                        <div class="mat-subtitle-2 text-primary fw-bold">Choose Event Mates</div>
+                                    </div>
+                                </div>
+                                <div class="card-body">
+                                    <mat-selection-list>
+                                        @for (eventMate of eventMates; track eventMate._id) {
+                                        <mat-list-option color="primary">{{
+                                            getUsernameById(eventMate.userId) | titlecase
+                                        }}</mat-list-option>
+                                        }
+                                    </mat-selection-list>
+                                </div>
+                                <div class="card-footer">
+                                    <button mat-flat-button color="primary" class="d-flex align-items-center">
+                                        <mat-icon>beenhere</mat-icon>
+                                        Save
+                                    </button>
+                                </div>
+                            </div>
+                            }
                         </div>
                         <mat-action-row>
                             <button
@@ -79,16 +153,17 @@
                                 [disabled]="!isInterestChanged">
                                 Update
                             </button>
-                            }
+                            } @if (event.isRegistrationClosed) {
                             <button
                                 mat-raised-button
                                 color="primary"
                                 (click)="getEventMates(registration.eventId, registration.interests)">
                                 Get Event Mates
                             </button>
+                            }
                         </mat-action-row>
                     </mat-expansion-panel>
-                    }
+                    } }
                 </mat-accordion>
                 } @else {
                 <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
@@ -103,5 +178,4 @@
         </mat-card>
     </div>
 </div>
-
 }

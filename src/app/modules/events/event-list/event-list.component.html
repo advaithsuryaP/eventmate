@@ -17,74 +17,57 @@
         <mat-card class="event-card">
             <mat-card-header class="event-card__header">
                 <mat-card-subtitle class="event-card__title">{{ event.title | uppercase }}</mat-card-subtitle>
-                <div class="mat-caption">Event created by {{ getUsernameById(event.creatorId) }}</div>
+                <div class="mat-caption">
+                    Total Attendees: <span class="fw-bold">{{ getAttendeeCountByEventId(event._id) | number }}</span>
+                </div>
+                <!-- <div class="mat-caption">Event created by {{ getUsernameById(event.creatorId) }}</div> -->
             </mat-card-header>
             <img mat-card-image [src]="event.image" alt="Event Image" />
             <mat-card-content class="event-card__content">
-                <div class="d-flex flex-column">
+                <div class="d-flex flex-column gap-2">
                     <!-- Domain -->
-                    <div class="d-flex my-1 justify-content-between">
-                        <div
-                            matTooltip="Domain"
-                            class="d-flex align-items-center px-2 bg-warning-subtle border border-warning rounded">
-                            <mat-icon>tag</mat-icon>
-                            <div class="mat-subtitle-2 text-warning-emphasis">
-                                {{ getDomainNameById(event.domainId) }}
-                            </div>
-                        </div>
-                        <div
-                            matTooltip="Total Attendance"
-                            class="d-flex align-items-center px-2 gap-2 bg-warning-subtle border border-warning rounded">
-                            <mat-icon color="primary">groups</mat-icon>
-                            <div class="mat-subtitle-2 text-warning-emphasis">
-                                {{ getAttendeeCountByEventId(event._id) | number }}
-                            </div>
+                    <div class="d-flex align-items-center gap-1">
+                        <mat-icon color="primary">tag</mat-icon>
+                        <div class="mat-subtitle-2 text-warning-emphasis">
+                            {{ getDomainNameById(event.domainId) }}
                         </div>
                     </div>
 
-                    <!-- Date and Time -->
-                    <div class="row my-1">
-                        <div class="col-md-1">
-                            <mat-icon color="primary">event</mat-icon>
-                        </div>
-                        <div class="col-md-11">
-                            <div class="d-flex align-items-center justify-content-start gap-2">
-                                <div class="mat-subtitle-2">
-                                    {{ event.date | date : 'fullDate' }}
-                                </div>
-                                @if (event.registrationClosesIn <= 1) {
-                                <mat-icon
-                                    color="accent"
-                                    [matTooltip]="'Registration closes in ' + event.registrationClosesIn + ' day!'">
-                                    notifications_active
-                                </mat-icon>
-                                }
+                    <!-- Date -->
+                    <div class="d-flex align-items-center gap-1">
+                        <mat-icon color="primary">event</mat-icon>
+                        <div class="d-flex align-items-center justify-content-start gap-2">
+                            <div class="mat-subtitle-2">
+                                {{ event.date | date : 'fullDate' }}
                             </div>
+                            @if (event.registrationClosesIn <= 1) {
+                            <mat-icon
+                                color="accent"
+                                [matTooltip]="
+                                    event.registrationClosesIn === 1
+                                        ? 'Registration closes in 1 day!'
+                                        : 'Registration closes today!'
+                                ">
+                                notifications_active
+                            </mat-icon>
+                            }
                         </div>
                     </div>
 
                     <!-- Time -->
-                    <div class="row my-1">
-                        <div class="col-md-1">
-                            <mat-icon color="primary">schedule</mat-icon>
-                        </div>
-                        <div class="col-md-11">
-                            <div class="mat-subtitle-2">{{ event.startTime }} - {{ event.endTime }}</div>
-                        </div>
+                    <div class="d-flex align-items-center gap-1">
+                        <mat-icon color="primary">schedule</mat-icon>
+                        <div class="mat-subtitle-2">{{ event.startTime }} - {{ event.endTime }}</div>
                     </div>
 
                     <!-- Location -->
-                    <div class="row my-1">
-                        <div class="col-md-1">
-                            <mat-icon color="primary">location_on</mat-icon>
-                        </div>
-                        <div class="col-md-11">
-                            <div class="mat-subtitle-2">{{ event.location }}</div>
-                        </div>
+                    <div class="d-flex align-items-center gap-1">
+                        <mat-icon color="primary">location_on</mat-icon>
+                        <div class="mat-subtitle-2">{{ event.location }}</div>
                     </div>
 
                     <!-- Description -->
-                    <div class="row my-1">
+                    <div class="row">
                         <div class="col-md-1">
                             <mat-icon color="primary">segment</mat-icon>
                         </div>

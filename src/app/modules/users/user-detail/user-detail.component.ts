@@ -3,33 +3,38 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { Subject, switchMap, combineLatest, takeUntil, filter, map } from 'rxjs';
 import { AuthService } from '../../../auth/auth.service';
 import { SNACKBAR_ACTION } from '../../../core/app.constants';
-import { User, Domain, Registration, Event } from '../../../core/app.models';
+import { User, Domain, Registration, Event, Feedback } from '../../../core/app.models';
 import { DomainService } from '../../domains/domain.service';
 import { EventService } from '../../events/event.service';
-import { TitleCasePipe, DatePipe, NgIf } from '@angular/common';
+import { TitleCasePipe, DatePipe, UpperCasePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipListboxChange, MatChipsModule } from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
 import { RegistrationService } from '../../registration/registration.service';
-import { GetEventMatesPayload } from '../../../core/app.payload';
+import { GetEventMatesPayload, SubmitFeedbackPayload } from '../../../core/app.payload';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatCardModule } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
+import { MatTooltipModule } from '@angular/material/tooltip';
+import { MatListModule } from '@angular/material/list';
+import { UserService } from '../user.service';
 
 @Component({
     standalone: true,
     imports: [
-        NgIf,
         DatePipe,
         RouterLink,
+        MatListModule,
         MatCardModule,
+        UpperCasePipe,
         MatIconModule,
         TitleCasePipe,
         MatIconModule,
         MatChipsModule,
         MatButtonModule,
+        MatTooltipModule,
         MatDividerModule,
         MatCheckboxModule,
         MatExpansionModule
@@ -41,14 +46,18 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
     isInterestChanged: boolean = false;
 
     currentUser!: User;
+
     eventMates: Registration[] = [];
 
+    users: User[] = [];
     events: Event[] = [];
     domains: Domain[] = [];
+    feedbacks: Feedback[] = [];
     registrations: Registration[] = [];
 
     private _snackbar = inject(MatSnackBar);
     private _authService = inject(AuthService);
+    private _userService = inject(UserService);
     private _eventService = inject(EventService);
     private _domainService = inject(DomainService);
     private _registrationService = inject(RegistrationService);
@@ -64,19 +73,24 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
                 switchMap(currentUser => {
                     this.currentUser = currentUser;
                     return combineLatest([
-                        this._domainService.domains$,
+                        this._userService.users$,
                         this._eventService.events$,
-                        this._registrationService.fetchUserRegistrations(this.currentUser._id)
+                        this._domainService.domains$,
+                        this._userService.fetchUserFeedback$(this.currentUser._id),
+                        this._userService.fetchUserRegistrations$(this.currentUser._id)
                     ]);
                 }),
                 takeUntil(this._unsubscribeAll)
             )
             .subscribe({
-                next: ([domains, events, registrations]) => {
+                next: ([users, events, domains, feedbacks, registrations]) => {
                     this.isLoading = false;
-                    this.domains = domains;
+                    this.users = users;
                     this.events = events;
+                    this.domains = domains;
+                    this.feedbacks = feedbacks;
                     this.registrations = registrations;
+                    console.log(feedbacks);
                 }
             });
     }
@@ -87,6 +101,10 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
 
     getDomainById(domainId: string): Domain | undefined {
         return this.domains.find(d => d._id === domainId);
+    }
+
+    getUsernameById(userId: string): string {
+        return this.users.find(u => u._id === userId)?.username ?? 'Unknown User';
     }
 
     cancelRegistration(registrationId: string, index: number): void {
@@ -118,17 +136,25 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
         }
     }
 
-    canUserChangeInterest(event: Event): boolean {
-        let result = true;
-        const eventDate: Date = new Date(event.date);
-        const today = new Date();
+    updateInterest(): void {}
 
-        // console.log('Event Date: ', eventDate);
-        // console.log('Today: ', today);
-        return result;
+    submitFeedback(eventId: string, userId: string) {
+        const payload: SubmitFeedbackPayload = {
+            userId: this.currentUser._id,
+            eventId: eventId,
+            comment: '',
+            rating: 3
+        };
+        this._userService.submitFeedback(payload).subscribe({
+            next: response => {
+                this._snackbar.open(response, SNACKBAR_ACTION.SUCCESS);
+            }
+        });
     }
 
-    updateInterest(): void {}
+    getEventTitleById(eventId: string): string {
+        return this.events.find(e => e._id === eventId)?.title ?? 'Unknown Event';
+    }
 
     getEventMates(eventId: string, interests: string[]): void {
         const payload: GetEventMatesPayload = {
@@ -138,7 +164,7 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
         };
         this._registrationService.fetchEventMates(payload).subscribe({
             next: response => {
-                console.log(response);
+                this.eventMates = response;
             }
         });
     }
