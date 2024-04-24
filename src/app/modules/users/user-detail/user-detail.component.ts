@@ -12,7 +12,7 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipListboxChange, MatChipsModule } from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
-import { GetEventMatesPayload, SubmitFeedbackPayload } from '../../../core/app.payload';
+import { GetEventMatesPayload, SubmitFeedbackPayload, UpdateRegistrationPayload } from '../../../core/app.payload';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatCardModule } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
@@ -43,6 +43,7 @@ import { UserService } from '../user.service';
 export default class UserDetailComponent implements OnInit, OnDestroy {
     isLoading: boolean = false;
     isInterestChanged: boolean = false;
+    private _selectedInterest: string = '';
 
     currentUser!: User;
 
@@ -88,7 +89,6 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
                     this.domains = domains;
                     this.feedbacks = feedbacks;
                     this.registrations = registrations;
-                    console.log(feedbacks);
                 }
             });
     }
@@ -126,15 +126,27 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
     openPanelEvent(): void {
         this.eventMates = [];
         this.isInterestChanged = false;
+        this._selectedInterest = '';
     }
 
     onChangeInterest(event: MatChipListboxChange) {
         if (event.value) {
+            this._selectedInterest = event.value;
             this.isInterestChanged = true;
         }
     }
 
-    updateInterest(): void {}
+    updateInterest(registrationId: string): void {
+        const payload: UpdateRegistrationPayload = {
+            registrationId: registrationId,
+            interests: [this._selectedInterest]
+        };
+        this._eventService.updateRegistration(payload).subscribe({
+            next: response => {
+                this._snackbar.open(response, SNACKBAR_ACTION.SUCCESS);
+            }
+        });
+    }
 
     submitFeedback(eventId: string, userId: string) {
         const payload: SubmitFeedbackPayload = {
@@ -154,13 +166,13 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
         return this.events.find(e => e._id === eventId)?.title ?? 'Unknown Event';
     }
 
-    getEventMates(eventId: string, interests: string[]): void {
+    getRecommendations(eventId: string, interests: string[]): void {
         const payload: GetEventMatesPayload = {
             userId: this.currentUser._id,
             eventId: eventId,
             interests: interests
         };
-        this._userService.fetchEventMates(payload).subscribe({
+        this._userService.fetchEventmateRecommendations(payload).subscribe({
             next: response => {
                 this.eventMates = response;
             }

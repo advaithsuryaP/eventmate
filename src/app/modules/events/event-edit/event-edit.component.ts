@@ -11,7 +11,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatIconModule } from '@angular/material/icon';
 import { MatRadioModule } from '@angular/material/radio';
 import { MatChipsModule } from '@angular/material/chips';
-import { CreateEventPayload } from '../../../core/app.payload';
+import { SaveEventPayload } from '../../../core/app.payload';
 import { MatDatepickerModule } from '@angular/material/datepicker';
 import { MatNativeDateModule } from '@angular/material/core';
 import { ActivatedRoute, Router } from '@angular/router';
@@ -108,7 +108,7 @@ export default class EventEditComponent implements OnInit, OnDestroy {
 
     saveEvent(): void {
         if (this.eventForm.valid) {
-            const payload: CreateEventPayload = this.eventForm.getRawValue();
+            const payload: SaveEventPayload = this.eventForm.getRawValue();
             if (!this.isEditMode) {
                 payload.image = `${this.RANDOM_IMAGE}?random=${this._eventService.getLatestEventCount()}`;
                 this._eventService

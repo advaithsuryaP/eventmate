@@ -2,7 +2,7 @@ import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
 import { BehaviorSubject, Observable, map, tap } from 'rxjs';
 import { API_URL_MAP } from '../../core/app.constants';
-import { CreateEventPayload, RegisterEventPayload } from '../../core/app.payload';
+import { SaveEventPayload, RegisterEventPayload, UpdateRegistrationPayload } from '../../core/app.payload';
 import { Event, Registration } from '../../core/app.models';
 
 @Injectable({
@@ -51,7 +51,7 @@ export class EventService {
             .pipe(map(response => response.data));
     }
 
-    createEvent(payload: CreateEventPayload): Observable<string> {
+    createEvent(payload: SaveEventPayload): Observable<string> {
         return this._http.post<{ message: string; data: Event }>(API_URL_MAP.EVENTS, payload).pipe(
             map(response => {
                 this._events.push(response.data);
@@ -61,7 +61,7 @@ export class EventService {
         );
     }
 
-    updateEvent(eventId: string, payload: CreateEventPayload): Observable<string> {
+    updateEvent(eventId: string, payload: SaveEventPayload): Observable<string> {
         return this._http.put<{ message: string; data: Event }>(`${API_URL_MAP.EVENTS}/${eventId}`, payload).pipe(
             map(response => {
                 const indexToUpdate = this._events.findIndex(e => e._id == eventId);
@@ -135,6 +135,19 @@ export class EventService {
                     }
                 })
             );
+    }
+
+    updateRegistration(payload: UpdateRegistrationPayload) {
+        return this._http.put<{ message: string; data: Registration }>(API_URL_MAP.UPDATE_REGISTRATION, payload).pipe(
+            map(response => {
+                const indexToUpdate: number = this._registrations.findIndex(r => r._id === payload.registrationId);
+                if (indexToUpdate !== -1) {
+                    this._registrations[indexToUpdate] = response.data;
+                    this._registrationSubject.next(this._registrations.slice());
+                }
+                return response.message;
+            })
+        );
     }
 
     private calculateRamainingDaysToEvent(event: Event): number {

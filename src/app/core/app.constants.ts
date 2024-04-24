@@ -9,7 +9,9 @@ export const API_URL_MAP = {
     GET_EVENT_FEEDBACK: `${environment.API_URL}/feedbacks/event`,
     SIGNIN_USER: `${environment.API_URL}/users/signin`,
     SIGNUP_USER: `${environment.API_URL}/users/signup`,
-    REGISTRATIONS: `${environment.API_URL}/registrations`
+    REGISTRATIONS: `${environment.API_URL}/registrations`,
+    UPDATE_REGISTRATION: `${environment.API_URL}/registrations/update-registration`,
+    GET_EVENTMATES_RECOMMENDATIONS: `${environment.API_URL}/registrations/get-eventmate-recommendations`
 };
 
 export const SNACKBAR_ACTION = {

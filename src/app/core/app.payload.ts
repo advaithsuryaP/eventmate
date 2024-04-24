@@ -15,7 +15,7 @@ export interface CreateDomainPayload {
     interests: string[];
 }
 
-export interface CreateEventPayload {
+export interface SaveEventPayload {
     image: string;
     title: string;
     description: string;
@@ -32,6 +32,7 @@ export interface RegisterEventPayload {
     eventId: string;
     domainId: string;
     interests: string[];
+    eventMates: string[];
 }
 
 export interface GetEventMatesPayload {
@@ -45,4 +46,9 @@ export interface SubmitFeedbackPayload {
     eventId: string;
     comment: string;
     rating: number;
+}
+
+export interface UpdateRegistrationPayload {
+    registrationId: string;
+    interests: string[];
 }

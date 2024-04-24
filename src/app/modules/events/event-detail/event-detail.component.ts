@@ -82,7 +82,8 @@ export default class EventDetailComponent implements OnInit, OnDestroy {
                 userId: this.currentUser!._id,
                 eventId: this.event._id,
                 interests: [this.selectedInterest],
-                domainId: this.event.domainId
+                domainId: this.event.domainId,
+                eventMates: [] // This will be empty initially
             };
             this._eventService.registerEvent(payload).subscribe({
                 next: response => {

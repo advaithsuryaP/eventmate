@@ -25,9 +25,9 @@
                         </div>
                     </div>
                 </mat-card-content>
-                <mat-card-actions align="end">
+                <!-- <mat-card-actions align="end">
                     <button mat-button color="accent">UPDATE</button>
-                </mat-card-actions>
+                </mat-card-actions> -->
             </mat-card>
 
             <mat-card>
@@ -129,12 +129,12 @@
                                         }
                                     </mat-selection-list>
                                 </div>
-                                <div class="card-footer">
+                                <!-- <div class="card-footer">
                                     <button mat-flat-button color="primary" class="d-flex align-items-center">
                                         <mat-icon>beenhere</mat-icon>
                                         Save
                                     </button>
-                                </div>
+                                </div> -->
                             </div>
                             }
                         </div>
@@ -149,7 +149,7 @@
                             <button
                                 mat-raised-button
                                 color="primary"
-                                (click)="updateInterest()"
+                                (click)="updateInterest(registration._id)"
                                 [disabled]="!isInterestChanged">
                                 Update
                             </button>
@@ -157,8 +157,8 @@
                             <button
                                 mat-raised-button
                                 color="primary"
-                                (click)="getEventMates(registration.eventId, registration.interests)">
-                                Get Event Mates
+                                (click)="getRecommendations(registration.eventId, registration.interests)">
+                                Get Recommended Connections
                             </button>
                             }
                         </mat-action-row>
