@@ -4,7 +4,6 @@ import { DomainService } from '../../modules/domains/domain.service';
 import { Domain, Event, Registration, User } from '../app.models';
 import { combineLatest } from 'rxjs';
 import { EventService } from '../../modules/events/event.service';
-import { RegistrationService } from '../../modules/registration/registration.service';
 import { UserService } from '../../modules/users/user.service';
 
 export const appResolver: ResolveFn<[User[], Event[], Domain[], Registration[]]> = (
@@ -15,6 +14,6 @@ export const appResolver: ResolveFn<[User[], Event[], Domain[], Registration[]]>
         inject(UserService).fetchUsers(),
         inject(EventService).getEvents(),
         inject(DomainService).getDomains(),
-        inject(RegistrationService).fetchRegistrations()
+        inject(EventService).fetchRegistrations()
     ]);
 };

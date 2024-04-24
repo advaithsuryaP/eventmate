@@ -31,11 +31,6 @@ export const routes: Routes = [
                 path: 'users',
                 loadChildren: () => import('./modules/users/users.routes'),
                 canActivate: [authGuard]
-            },
-            {
-                path: 'register/:eventId',
-                loadComponent: () => import('./modules/registration/registration.component'),
-                canActivate: [authGuard]
             }
         ]
     },

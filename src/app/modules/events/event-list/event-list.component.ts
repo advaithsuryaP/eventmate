@@ -3,7 +3,6 @@ import { Router, RouterLink } from '@angular/router';
 import { Subject, combineLatest, takeUntil } from 'rxjs';
 import { AuthService } from '../../../auth/auth.service';
 import { DomainService } from '../../domains/domain.service';
-import { RegistrationService } from '../../registration/registration.service';
 import { EventService } from '../event.service';
 import { Domain, Event, Registration, User } from '../../../core/app.models';
 import { DatePipe, DecimalPipe, UpperCasePipe } from '@angular/common';
@@ -56,7 +55,6 @@ export default class EventListComponent implements OnInit, OnDestroy {
     private _userService = inject(UserService);
     private _eventService = inject(EventService);
     private _domainService = inject(DomainService);
-    private _registrationService = inject(RegistrationService);
 
     private _unsubscribeAll: Subject<null> = new Subject();
 
@@ -66,7 +64,7 @@ export default class EventListComponent implements OnInit, OnDestroy {
             this._authService.currentUser$,
             this._domainService.domains$,
             this._eventService.events$,
-            this._registrationService.registrations$
+            this._eventService.registrations$
         ])
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
@@ -111,7 +109,7 @@ export default class EventListComponent implements OnInit, OnDestroy {
     }
 
     registerEvent(eventId: string) {
-        this._router.navigate([`/register/${eventId}`]);
+        this._router.navigate([`/events/${eventId}`]);
     }
 
     ngOnDestroy(): void {

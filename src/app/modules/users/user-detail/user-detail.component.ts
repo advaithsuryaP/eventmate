@@ -12,7 +12,6 @@ import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatChipListboxChange, MatChipsModule } from '@angular/material/chips';
 import { MatExpansionModule } from '@angular/material/expansion';
 import { MatIconModule } from '@angular/material/icon';
-import { RegistrationService } from '../../registration/registration.service';
 import { GetEventMatesPayload, SubmitFeedbackPayload } from '../../../core/app.payload';
 import { MatDividerModule } from '@angular/material/divider';
 import { MatCardModule } from '@angular/material/card';
@@ -60,7 +59,6 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
     private _userService = inject(UserService);
     private _eventService = inject(EventService);
     private _domainService = inject(DomainService);
-    private _registrationService = inject(RegistrationService);
 
     private _unsubscribeAll: Subject<null> = new Subject();
 
@@ -107,9 +105,9 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
         return this.users.find(u => u._id === userId)?.username ?? 'Unknown User';
     }
 
-    cancelRegistration(registrationId: string, index: number): void {
+    unRegisterForEvent(registrationId: string, index: number) {
         this.isLoading = true;
-        this._registrationService.deleteRegistration(registrationId).subscribe({
+        this._eventService.unRegisterEvent(registrationId).subscribe({
             next: response => {
                 if (response.data.deletedCount === 1) {
                     this._snackbar.open(response.message, SNACKBAR_ACTION.SUCCESS);
@@ -162,7 +160,7 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
             eventId: eventId,
             interests: interests
         };
-        this._registrationService.fetchEventMates(payload).subscribe({
+        this._userService.fetchEventMates(payload).subscribe({
             next: response => {
                 this.eventMates = response;
             }

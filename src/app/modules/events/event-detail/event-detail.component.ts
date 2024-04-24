@@ -1,28 +1,28 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
-import { Subject, combineLatest, switchMap, takeUntil } from 'rxjs';
-import { ActivatedRoute, Router, RouterLink } from '@angular/router';
-import { User, Domain, Event } from '../../core/app.models';
-import { MatCardModule } from '@angular/material/card';
+import { MatChipSelectionChange, MatChipsModule } from '@angular/material/chips';
+import { MatSnackBar } from '@angular/material/snack-bar';
+import { Router, ActivatedRoute, RouterLink } from '@angular/router';
+import { Subject, switchMap, combineLatest, takeUntil } from 'rxjs';
+import { AuthService } from '../../../auth/auth.service';
+import { SNACKBAR_ACTION } from '../../../core/app.constants';
+import { Domain, Event, User } from '../../../core/app.models';
+import { RegisterEventPayload } from '../../../core/app.payload';
+import { DomainService } from '../../domains/domain.service';
+import { EventService } from '../event.service';
 import { DatePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
-import { RegisterEventPayload } from '../../core/app.payload';
-import { AuthService } from '../../auth/auth.service';
-import { MatSnackBar } from '@angular/material/snack-bar';
-import { EventService } from '../events/event.service';
-import { DomainService } from '../domains/domain.service';
-import { RegistrationService } from './registration.service';
-import { SNACKBAR_ACTION } from '../../core/app.constants';
-import { MatChipSelectionChange, MatChipsModule } from '@angular/material/chips';
+import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
 
 @Component({
-    selector: 'app-registration',
+    selector: 'app-event-detail',
     standalone: true,
     imports: [MatCardModule, DatePipe, MatButtonModule, RouterLink, MatChipsModule, MatIconModule, MatTooltipModule],
-    templateUrl: './registration.component.html'
+    templateUrl: './event-detail.component.html',
+    styleUrl: './event-detail.component.css'
 })
-export default class RegistrationComponent implements OnInit, OnDestroy {
+export default class EventDetailComponent implements OnInit, OnDestroy {
     isLoading: boolean = false;
     selectedInterest: string = '';
 
@@ -32,7 +32,6 @@ export default class RegistrationComponent implements OnInit, OnDestroy {
     private _eventService = inject(EventService);
     private _snackbarService = inject(MatSnackBar);
     private _domainService = inject(DomainService);
-    private _registrationService = inject(RegistrationService);
 
     event!: Event;
     domains: Domain[] = [];
@@ -85,7 +84,7 @@ export default class RegistrationComponent implements OnInit, OnDestroy {
                 interests: [this.selectedInterest],
                 domainId: this.event.domainId
             };
-            this._registrationService.registerEvent(payload).subscribe({
+            this._eventService.registerEvent(payload).subscribe({
                 next: response => {
                     this._router.navigate(['/events']);
                     this._snackbarService.open(response, SNACKBAR_ACTION.SUCCESS, { duration: 3000 });

@@ -1,9 +1,9 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable, map } from 'rxjs';
+import { BehaviorSubject, Observable, map, tap } from 'rxjs';
 import { API_URL_MAP } from '../../core/app.constants';
-import { CreateEventPayload } from '../../core/app.payload';
-import { Event } from '../../core/app.models';
+import { CreateEventPayload, RegisterEventPayload } from '../../core/app.payload';
+import { Event, Registration } from '../../core/app.models';
 
 @Injectable({
     providedIn: 'root'
@@ -24,6 +24,10 @@ export class EventService {
             })
         )
     );
+
+    private _registrations: Registration[] = [];
+    private _registrationSubject = new BehaviorSubject<Registration[]>([]);
+    registrations$ = this._registrationSubject.asObservable();
 
     private _http = inject(HttpClient);
 
@@ -81,6 +85,54 @@ export class EventService {
                         return true;
                     }
                     return false;
+                })
+            );
+    }
+
+    fetchRegistrations(): Observable<Registration[]> {
+        return this._http.get<{ message: string; data: Registration[] }>(`${API_URL_MAP.REGISTRATIONS}`).pipe(
+            map(response => {
+                this._registrations = response.data;
+                this._registrationSubject.next(this._registrations.slice());
+                return response.data;
+            })
+        );
+    }
+
+    fetchEventRegistrations(eventId: string): Observable<Registration[]> {
+        let httpParams = new HttpParams();
+        httpParams = httpParams.append('eventId', eventId);
+        return this._http
+            .get<{ message: string; data: Registration[] }>(API_URL_MAP.REGISTRATIONS, {
+                params: httpParams
+            })
+            .pipe(map(response => response.data));
+    }
+
+    registerEvent(payload: RegisterEventPayload): Observable<string> {
+        return this._http.post<{ message: string; data: Registration }>(API_URL_MAP.REGISTRATIONS, payload).pipe(
+            map(response => {
+                this._registrations.push(response.data);
+                this._registrationSubject.next(this._registrations.slice());
+                return response.message;
+            })
+        );
+    }
+
+    unRegisterEvent(
+        registrationId: string
+    ): Observable<{ message: string; data: { acknowledged: boolean; deletedCount: number } }> {
+        return this._http
+            .delete<{ message: string; data: { acknowledged: boolean; deletedCount: number } }>(
+                `${API_URL_MAP.REGISTRATIONS}/${registrationId}`
+            )
+            .pipe(
+                tap(response => {
+                    const indexToDelete = this._registrations.findIndex(r => r._id === registrationId);
+                    if (indexToDelete !== -1) {
+                        this._registrations.splice(indexToDelete, 1);
+                        this._registrationSubject.next(this._registrations.slice());
+                    }
                 })
             );
     }

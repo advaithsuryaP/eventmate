@@ -3,7 +3,7 @@ import { Injectable, inject } from '@angular/core';
 import { API_URL_MAP } from '../../core/app.constants';
 import { Feedback, Registration, User } from '../../core/app.models';
 import { BehaviorSubject, Observable, map } from 'rxjs';
-import { SubmitFeedbackPayload } from '../../core/app.payload';
+import { GetEventMatesPayload, RegisterEventPayload, SubmitFeedbackPayload } from '../../core/app.payload';
 
 @Injectable({
     providedIn: 'root'
@@ -46,6 +46,12 @@ export class UserService {
         httpParams = httpParams.append('userId', userId);
         return this._http
             .get<{ message: string; data: Feedback[] }>(API_URL_MAP.GET_USER_FEEDBACK, { params: httpParams })
+            .pipe(map(response => response.data));
+    }
+
+    fetchEventMates(payload: GetEventMatesPayload): Observable<Registration[]> {
+        return this._http
+            .post<{ message: string; data: Registration[] }>(`${API_URL_MAP.REGISTRATIONS}/event-mates`, payload)
             .pipe(map(response => response.data));
     }
 }
