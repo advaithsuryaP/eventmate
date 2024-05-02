@@ -14,7 +14,9 @@ export class EventService {
     events$ = this._eventsSubject.asObservable().pipe(
         map(event =>
             event.map(e => {
-                const daysLeftForEventToStart: number = this.calculateRamainingDaysToEvent(e);
+                e.eventDate = this._constructEventDate(e.date, e.startTime);
+
+                const daysLeftForEventToStart: number = this._calculateRamainingDaysToEvent(e);
                 return {
                     ...e,
                     eventStartsIn: daysLeftForEventToStart,
@@ -150,16 +152,27 @@ export class EventService {
         );
     }
 
-    private calculateRamainingDaysToEvent(event: Event): number {
-        const eventDate: Date = new Date(event.date);
+    private _constructEventDate(dateInString: string, startTime: string): Date {
+        const dateObj = new Date(dateInString);
+        const year: number = dateObj.getFullYear();
+        const month: number = dateObj.getMonth();
+        const day: number = dateObj.getDate();
+        const hour: number = +startTime.split(':')[0];
+        const minute: number = +startTime.split(':')[1];
+        return new Date(year, month, day, hour, minute);
+    }
+
+    private _calculateRamainingDaysToEvent(event: Event): number {
         const today = new Date();
+        today.setHours(0, 0, 0, 0); // Set time to midnight for accurate day calculation
+        const eventDate = event.eventDate;
 
-        // getTime() returns the number of milliseconds since January 1, 1970, 00:00:00 UTC.
-        const timeDiffInMilliSeconds = eventDate.getTime() - today.getTime();
-        // Convert milliseconds to days by dividing by the number of milliseconds in a day
-        const dayInMilliSeconds = 1000 * 60 * 60 * 24;
-        const differenceInDays = timeDiffInMilliSeconds / dayInMilliSeconds;
+        // Calculate difference in milliseconds
+        const timeDifference = Math.abs(eventDate.getTime() - today.getTime());
 
-        return Math.floor(differenceInDays);
+        // Convert milliseconds to days
+        const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+
+        return daysDifference;
     }
 }

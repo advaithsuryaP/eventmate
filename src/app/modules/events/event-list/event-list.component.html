@@ -18,9 +18,11 @@
             <mat-card-header class="event-card__header">
                 <mat-card-subtitle class="event-card__title">{{ event.title | uppercase }}</mat-card-subtitle>
                 <div class="mat-caption">
-                    Total Attendees: <span class="fw-bold">{{ getAttendeeCountByEventId(event._id) | number }}</span>
+                    Total Attendees:
+                    <span class="fw-bold">
+                        {{ getAttendeeCountByEventId(event._id) | number }}
+                    </span>
                 </div>
-                <!-- <div class="mat-caption">Event created by {{ getUsernameById(event.creatorId) }}</div> -->
             </mat-card-header>
             <img mat-card-image [src]="event.image" alt="Event Image" />
             <mat-card-content class="event-card__content">

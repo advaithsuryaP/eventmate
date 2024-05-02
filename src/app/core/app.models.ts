@@ -23,6 +23,7 @@ export interface Event {
     creatorId: string;
 
     // frontend paramaters
+    eventDate: Date;
     eventStartsIn: number; // Days remaining for the event to start
     registrationClosesIn: number; // Days remaining for the registration to close
     isRegistrationClosed: boolean;
