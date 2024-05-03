@@ -54,4 +54,10 @@ export class UserService {
             .post<{ message: string; data: Registration[] }>(`${API_URL_MAP.GET_EVENTMATES_RECOMMENDATIONS}`, payload)
             .pipe(map(response => response.data));
     }
+
+    getUserById(userId: string): User {
+        const user = this._users.find(u => u._id === userId);
+        if (!user) throw new Error('User not found');
+        return user;
+    }
 }

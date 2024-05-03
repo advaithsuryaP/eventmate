@@ -1,0 +1,23 @@
+<div mat-dialog-title class="text-primary">{{ data.isConfirmed ? 'Eventmates' : 'Select Eventmates' }}</div>
+<mat-dialog-content>
+    <mat-selection-list #eventmateSelection>
+        @for (registration of data.eventmates; track registration._id) {
+        <mat-list-option color="primary" [value]="registration.userId">
+            <p matListItemTitle>
+                {{ getUsername(registration.userId) | titlecase }}
+            </p>
+            <p matListItemLine>{{ getEmail(registration.userId) }}</p>
+        </mat-list-option>
+        }
+    </mat-selection-list>
+    <mat-divider></mat-divider>
+    <div class="d-flex align-items-center mt-3 mat-subtitle-1 text-primary fw-medium">
+        Selected: {{ eventmateSelection.selectedOptions.selected.length | number }}
+    </div>
+</mat-dialog-content>
+<mat-dialog-actions align="end">
+    <button mat-button color="accent" mat-dialog-close>CANCEL</button>
+    <button mat-raised-button color="primary" (click)="confirmEventmates(eventmateSelection.selectedOptions.selected)">
+        CONFIRM
+    </button>
+</mat-dialog-actions>

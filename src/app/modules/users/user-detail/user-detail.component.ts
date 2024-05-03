@@ -17,15 +17,15 @@ import { MatDividerModule } from '@angular/material/divider';
 import { MatCardModule } from '@angular/material/card';
 import { RouterLink } from '@angular/router';
 import { MatTooltipModule } from '@angular/material/tooltip';
-import { MatListModule } from '@angular/material/list';
 import { UserService } from '../user.service';
+import { MatDialog } from '@angular/material/dialog';
+import { EventmateSelectionComponent } from '../eventmate-selection/eventmate-selection.component';
 
 @Component({
     standalone: true,
     imports: [
         DatePipe,
         RouterLink,
-        MatListModule,
         MatCardModule,
         UpperCasePipe,
         MatIconModule,
@@ -55,6 +55,7 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
     feedbacks: Feedback[] = [];
     registrations: Registration[] = [];
 
+    private _matDialog = inject(MatDialog);
     private _snackbar = inject(MatSnackBar);
     private _authService = inject(AuthService);
     private _userService = inject(UserService);
@@ -101,10 +102,6 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
         return this.domains.find(d => d._id === domainId);
     }
 
-    getUsernameById(userId: string): string {
-        return this.users.find(u => u._id === userId)?.username ?? 'Unknown User';
-    }
-
     unRegisterForEvent(registrationId: string, index: number) {
         this.isLoading = true;
         this._eventService.unRegisterEvent(registrationId).subscribe({
@@ -148,7 +145,7 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
         });
     }
 
-    submitFeedback(eventId: string, userId: string) {
+    submitFeedback(eventId: string) {
         const payload: SubmitFeedbackPayload = {
             userId: this.currentUser._id,
             eventId: eventId,
@@ -174,7 +171,22 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
         };
         this._userService.fetchEventmateRecommendations(payload).subscribe({
             next: response => {
-                this.eventMates = response;
+                this._matDialog
+                    .open(EventmateSelectionComponent, {
+                        disableClose: true,
+                        autoFocus: 'dialog',
+                        width: '30%',
+                        data: {
+                            isConfirmed: false,
+                            eventmates: response
+                        }
+                    })
+                    .afterClosed()
+                    .subscribe({
+                        next: response => {
+                            console.log(response);
+                        }
+                    });
             }
         });
     }
