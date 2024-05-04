@@ -1,7 +1,7 @@
 import { Component, OnInit, inject } from '@angular/core';
 import { RouterOutlet } from '@angular/router';
 import { AuthService } from './auth/auth.service';
-import { LoaderComponent } from './core/components/loader/loader.component';
+import { LoaderComponent } from './core/components/loader.component';
 
 @Component({
     selector: 'app-root',

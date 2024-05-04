@@ -1,7 +1,7 @@
 import { Routes } from '@angular/router';
 import { authGuard } from './core/services/auth.guard';
 import { appResolver } from './core/services/app.resolver';
-import { ShellComponent } from './core/components/shell/shell.component';
+import { ShellComponent } from './core/components/shell.component';
 
 export const routes: Routes = [
     {
@@ -36,6 +36,6 @@ export const routes: Routes = [
     },
     {
         path: '**',
-        loadComponent: () => import('./core/components/error-page/error-page.component')
+        loadComponent: () => import('./core/components/error-page.component')
     }
 ];

@@ -54,12 +54,12 @@ export default class EventEditComponent implements OnInit, OnDestroy {
     startTime: string = '';
     endTime: string = '';
 
-    private readonly RANDOM_IMAGE: string = 'https://picsum.photos/300/300';
+    private readonly PICSUM_IMAGE: string = 'https://picsum.photos/id/{id}/300/300';
 
     private _unsubscribeAll: Subject<null> = new Subject();
 
     eventForm = new FormGroup({
-        image: this._fb.control<string>(this.RANDOM_IMAGE, { validators: [Validators.required], nonNullable: true }),
+        image: this._fb.control<string>(this.PICSUM_IMAGE, { validators: [Validators.required], nonNullable: true }),
         title: this._fb.control<string>('', { validators: [Validators.required], nonNullable: true }),
         description: this._fb.control<string>('', { validators: [Validators.required], nonNullable: true }),
         location: this._fb.control<string>('', { validators: [Validators.required], nonNullable: true }),
@@ -129,7 +129,6 @@ export default class EventEditComponent implements OnInit, OnDestroy {
                         }
                     });
             } else {
-                payload.image = `${this.RANDOM_IMAGE}?random=${this._eventService.getLatestEventCount()}`;
                 this._eventService
                     .createEvent(payload)
                     .pipe(takeUntil(this._unsubscribeAll))
