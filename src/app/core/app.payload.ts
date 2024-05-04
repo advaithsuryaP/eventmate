@@ -22,9 +22,8 @@ export interface SaveEventPayload {
     creatorId: string;
     domainId: string;
     location: string;
-    date: string;
-    startTime: string;
-    endTime: string;
+    startDate: Date;
+    endDate: Date;
 }
 
 export interface RegisterEventPayload {

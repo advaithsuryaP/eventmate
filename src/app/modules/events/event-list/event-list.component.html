@@ -1,5 +1,14 @@
 <div class="d-flex justify-content-between">
-    <div class="mat-headline-5">Upcoming Events</div>
+    <!-- <div class="mat-headline-5">Upcoming Events</div> -->
+    <mat-form-field>
+        <mat-label>Filter by domain</mat-label>
+        <mat-select placeholder="Chose domain name" [formControl]="domainFilterControl">
+            <mat-option [value]="null">All</mat-option>
+            @for (domain of domains; track $index) {
+            <mat-option [value]="domain._id">{{ domain.name }}</mat-option>
+            }
+        </mat-select>
+    </mat-form-field>
     @if (currentUser && currentUser.isAdmin) {
     <button
         color="primary"
@@ -40,7 +49,7 @@
                         <mat-icon color="primary">event</mat-icon>
                         <div class="d-flex align-items-center justify-content-start gap-2">
                             <div class="mat-subtitle-2">
-                                {{ event.date | date : 'fullDate' }}
+                                {{ event.startDate | date : 'short' }}
                             </div>
                             @if (event.registrationClosesIn <= 1) {
                             <mat-icon
@@ -54,12 +63,6 @@
                             </mat-icon>
                             }
                         </div>
-                    </div>
-
-                    <!-- Time -->
-                    <div class="d-flex align-items-center gap-1">
-                        <mat-icon color="primary">schedule</mat-icon>
-                        <div class="mat-subtitle-2">{{ event.startTime }} - {{ event.endTime }}</div>
                     </div>
 
                     <!-- Location -->

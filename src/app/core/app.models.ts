@@ -14,16 +14,14 @@ export interface Event {
     description: string;
     domainId: string;
     location: string;
-    date: string;
-    startTime: string;
-    endTime: string;
+    startDate: Date;
+    endDate: Date;
     adminId: string;
     createdAt: string;
     updatedAt: string;
     creatorId: string;
 
     // frontend paramaters
-    eventDate: Date;
     eventStartsIn: number; // Days remaining for the event to start
     registrationClosesIn: number; // Days remaining for the registration to close
     isRegistrationClosed: boolean;

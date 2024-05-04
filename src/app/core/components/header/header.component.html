@@ -8,7 +8,11 @@
     <button mat-button routerLink="/events">Events</button>
     @if(currentUser) {
     <button mat-button routerLink="/domains">Domains</button>
+    @if (currentUser.isAdmin) {
+    <button mat-button routerLink="/users">Users</button>
+    } @else {
     <button mat-button [routerLink]="['/users', currentUser._id]">Profile</button>
+    }
     <button mat-stroked-button color="accent" (click)="onSignout()">Logout</button>
     } @else {
     <button mat-stroked-button color="accent" routerLink="/auth">Login</button>

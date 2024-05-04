@@ -1,10 +1,31 @@
 <form [formGroup]="eventForm" class="d-flex flex-column gap-3">
     <mat-form-field>
-        <mat-label>Title</mat-label>
-        <mat-icon matIconPrefix color="primary">title</mat-icon>
-        <input type="text" matInput formControlName="title" autocomplete="off" placeholder="Enter event title" />
+        <mat-label>Image</mat-label>
+        <mat-icon color="primary" matIconPrefix>wallpaper</mat-icon>
+        <input type="text" matInput formControlName="image" autocomplete="off" placeholder="Enter event image" />
         <mat-error>This is a required field</mat-error>
     </mat-form-field>
+
+    <div class="row">
+        <mat-form-field class="col-6">
+            <mat-label>Title</mat-label>
+            <mat-icon matIconPrefix color="primary">title</mat-icon>
+            <input type="text" matInput formControlName="title" autocomplete="off" placeholder="Enter event title" />
+            <mat-error>This is a required field</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="col-6">
+            <mat-label>Location</mat-label>
+            <mat-icon matIconPrefix color="primary">location_on</mat-icon>
+            <input
+                type="text"
+                matInput
+                formControlName="location"
+                autocomplete="off"
+                placeholder="Enter event location" />
+            <mat-error>This is a required field</mat-error>
+        </mat-form-field>
+    </div>
 
     <mat-form-field>
         <mat-label>Description</mat-label>
@@ -14,49 +35,57 @@
         <mat-error>This is a required field</mat-error>
     </mat-form-field>
 
-    <mat-form-field>
-        <mat-label>Location</mat-label>
-        <mat-icon matIconPrefix color="primary">location_on</mat-icon>
-        <input type="text" matInput formControlName="location" autocomplete="off" placeholder="Enter event location" />
-        <mat-error>This is a required field</mat-error>
-    </mat-form-field>
-
-    <div class="d-flex gap-3 align-items-center">
-        <mat-form-field>
-            <mat-label>Date</mat-label>
+    <div class="row">
+        <mat-form-field class="col-3">
+            <mat-label>Start Date</mat-label>
             <input
                 matInput
                 autocomplete="off"
-                formControlName="date"
-                [matDatepicker]="datePicker"
+                formControlName="startDate"
+                [matDatepicker]="startDatePicker"
                 placeholder="Enter event date" />
-            <mat-datepicker-toggle matIconSuffix [for]="datePicker"></mat-datepicker-toggle>
-            <mat-datepicker #datePicker></mat-datepicker>
+            <mat-datepicker-toggle matIconSuffix [for]="startDatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #startDatePicker></mat-datepicker>
             <mat-error>This is a required field</mat-error>
         </mat-form-field>
 
-        <mat-form-field>
+        <mat-form-field class="col-3">
             <mat-label>Start Time</mat-label>
             <mat-icon matIconPrefix color="primary">schedule</mat-icon>
             <input
                 matInput
                 type="time"
                 autocomplete="off"
-                formControlName="startTime"
-                placeholder="Enter event start-time" />
+                [(ngModel)]="startTime"
+                placeholder="Enter event start-time"
+                [ngModelOptions]="{ standalone: true }" />
             <mat-hint>HH:mm</mat-hint>
             <mat-error>This is a required field</mat-error>
         </mat-form-field>
 
-        <mat-form-field>
+        <mat-form-field class="col-3">
+            <mat-label>End Date</mat-label>
+            <input
+                matInput
+                autocomplete="off"
+                formControlName="endDate"
+                [matDatepicker]="enddatePicker"
+                placeholder="Enter event date" />
+            <mat-datepicker-toggle matIconSuffix [for]="enddatePicker"></mat-datepicker-toggle>
+            <mat-datepicker #enddatePicker></mat-datepicker>
+            <mat-error>This is a required field</mat-error>
+        </mat-form-field>
+
+        <mat-form-field class="col-3">
             <mat-label>End Time</mat-label>
             <mat-icon matIconPrefix color="primary">av_timer</mat-icon>
             <input
                 matInput
                 type="time"
                 autocomplete="off"
-                formControlName="endTime"
-                placeholder="Enter event start-time" />
+                [(ngModel)]="endTime"
+                placeholder="Enter event start-time"
+                [ngModelOptions]="{ standalone: true }" />
             <mat-hint>HH:mm</mat-hint>
             <mat-error>This is a required field</mat-error>
         </mat-form-field>

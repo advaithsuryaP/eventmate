@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { Subject, combineLatest, takeUntil } from 'rxjs';
+import { Subject, combineLatest, startWith, takeUntil } from 'rxjs';
 import { AuthService } from '../../../auth/auth.service';
 import { DomainService } from '../../domains/domain.service';
 import { EventService } from '../event.service';
@@ -19,6 +19,8 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SNACKBAR_ACTION } from '../../../core/app.constants';
 import { UserService } from '../../users/user.service';
+import { MatSelectModule } from '@angular/material/select';
+import { FormControl, ReactiveFormsModule } from '@angular/forms';
 
 @Component({
     selector: 'app-event-list',
@@ -32,10 +34,12 @@ import { UserService } from '../../users/user.service';
         UpperCasePipe,
         MatListModule,
         MatInputModule,
+        MatSelectModule,
         MatButtonModule,
         MatDividerModule,
         MatTooltipModule,
         MatFormFieldModule,
+        ReactiveFormsModule,
         MatNativeDateModule,
         MatDatepickerModule
     ],
@@ -46,8 +50,10 @@ export default class EventListComponent implements OnInit, OnDestroy {
     users: User[] = [];
     events: Event[] = [];
     domains: Domain[] = [];
-    registrations: Registration[] = [];
     currentUser!: User | null;
+    registrations: Registration[] = [];
+
+    domainFilterControl = new FormControl();
 
     private _router = inject(Router);
     private _snackbar = inject(MatSnackBar);
@@ -59,20 +65,31 @@ export default class EventListComponent implements OnInit, OnDestroy {
     private _unsubscribeAll: Subject<null> = new Subject();
 
     ngOnInit(): void {
+        const events$ = this._eventService.events$;
+        const domainFilter$ = this.domainFilterControl.valueChanges.pipe(startWith(null));
+
+        combineLatest([events$, domainFilter$])
+            .pipe(takeUntil(this._unsubscribeAll))
+            .subscribe({
+                next: ([events, selectedDomainId]) => {
+                    if (selectedDomainId) {
+                        this.events = events.filter(e => e.domainId === selectedDomainId);
+                    } else this.events = events;
+                }
+            });
+
         combineLatest([
             this._userService.users$,
             this._authService.currentUser$,
             this._domainService.domains$,
-            this._eventService.events$,
             this._eventService.registrations$
         ])
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
-                next: ([users, currentUser, domains, events, registrations]) => {
+                next: ([users, currentUser, domains, registrations]) => {
                     this.users = users;
                     this.currentUser = currentUser;
                     this.domains = domains;
-                    this.events = events;
                     this.registrations = registrations;
                 }
             });

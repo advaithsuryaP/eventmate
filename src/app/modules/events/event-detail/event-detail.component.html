@@ -11,8 +11,7 @@
                 <p><strong>Description:</strong> {{ event.description }}</p>
                 <p><strong>Domain:</strong> {{ getDomainNameById(event.domainId) }}</p>
                 <p><strong>Location:</strong> {{ event.location }}</p>
-                <p><strong>Date:</strong> {{ event.date | date : 'MMM d, y' }}</p>
-                <p><strong>Time:</strong> {{ event.startTime }} - {{ event.endTime }}</p>
+                <p><strong>Date:</strong> {{ event.startDate | date : 'short' }}</p>
 
                 <div class="d-flex align-items-center gap-1 mb-1">
                     <h4 class="fw-medium my-0">Select your Interest</h4>

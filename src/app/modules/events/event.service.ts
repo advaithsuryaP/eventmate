@@ -14,11 +14,13 @@ export class EventService {
     events$ = this._eventsSubject.asObservable().pipe(
         map(event =>
             event.map(e => {
-                e.eventDate = this._constructEventDate(e.date, e.startTime);
-
+                e.startDate = new Date(e.startDate);
+                e.endDate = new Date(e.endDate);
                 const daysLeftForEventToStart: number = this._calculateRamainingDaysToEvent(e);
                 return {
                     ...e,
+                    startDate: new Date(e.startDate),
+                    endDate: new Date(e.endDate),
                     eventStartsIn: daysLeftForEventToStart,
                     registrationClosesIn: daysLeftForEventToStart - 1,
                     isRegistrationClosed: daysLeftForEventToStart <= 1
@@ -152,20 +154,10 @@ export class EventService {
         );
     }
 
-    private _constructEventDate(dateInString: string, startTime: string): Date {
-        const dateObj = new Date(dateInString);
-        const year: number = dateObj.getFullYear();
-        const month: number = dateObj.getMonth();
-        const day: number = dateObj.getDate();
-        const hour: number = +startTime.split(':')[0];
-        const minute: number = +startTime.split(':')[1];
-        return new Date(year, month, day, hour, minute);
-    }
-
     private _calculateRamainingDaysToEvent(event: Event): number {
         const today = new Date();
         today.setHours(0, 0, 0, 0); // Set time to midnight for accurate day calculation
-        const eventDate = event.eventDate;
+        const eventDate: Date = event.startDate;
 
         // Calculate difference in milliseconds
         const timeDifference = Math.abs(eventDate.getTime() - today.getTime());
