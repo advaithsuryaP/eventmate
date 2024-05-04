@@ -1,9 +1,9 @@
-import { HttpClient, HttpParams } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable, map, tap } from 'rxjs';
 import { API_URL_MAP } from '../../core/app.constants';
-import { SaveEventPayload, RegisterEventPayload, UpdateRegistrationPayload } from '../../core/app.payload';
 import { Event, Registration } from '../../core/app.models';
+import { HttpClient, HttpParams } from '@angular/common/http';
+import { BehaviorSubject, Observable, map, tap } from 'rxjs';
+import { SaveEventPayload, RegisterEventPayload, UpdateRegistrationPayload } from '../../core/app.payload';
 
 @Injectable({
     providedIn: 'root'
@@ -11,23 +11,7 @@ import { Event, Registration } from '../../core/app.models';
 export class EventService {
     private _events: Event[] = [];
     private _eventsSubject = new BehaviorSubject<Event[]>([]);
-    events$ = this._eventsSubject.asObservable().pipe(
-        map(event =>
-            event.map(e => {
-                e.startDate = new Date(e.startDate);
-                e.endDate = new Date(e.endDate);
-                const daysLeftForEventToStart: number = this._calculateRamainingDaysToEvent(e);
-                return {
-                    ...e,
-                    startDate: new Date(e.startDate),
-                    endDate: new Date(e.endDate),
-                    eventStartsIn: daysLeftForEventToStart,
-                    registrationClosesIn: daysLeftForEventToStart - 1,
-                    isRegistrationClosed: daysLeftForEventToStart <= 1
-                };
-            })
-        )
-    );
+    events$ = this._eventsSubject.asObservable();
 
     private _registrations: Registration[] = [];
     private _registrationSubject = new BehaviorSubject<Registration[]>([]);
@@ -38,11 +22,24 @@ export class EventService {
     getEvents(): Observable<Event[]> {
         return this._http.get<{ message: string; data: Event[] }>(API_URL_MAP.EVENTS).pipe(
             map(response => {
-                this._events = response.data;
+                const transformedEvents: Event[] = response.data.map(e => this._transformEvent(e));
+                this._events = transformedEvents;
                 this._eventsSubject.next(this._events.slice());
                 return response.data;
             })
         );
+    }
+
+    private _transformEvent(event: Event): Event {
+        const daysLeftForEventToStart: number = this._calculateRamainingDaysToEvent(event.startDate);
+        return {
+            ...event,
+            startDate: new Date(event.startDate),
+            endDate: new Date(event.endDate),
+            eventStartsIn: daysLeftForEventToStart,
+            registrationClosesIn: daysLeftForEventToStart - 1,
+            isRegistrationClosed: daysLeftForEventToStart <= 1
+        };
     }
 
     getLatestEventCount(): number {
@@ -52,7 +49,7 @@ export class EventService {
     getEvent(eventId: string): Observable<Event> {
         return this._http
             .get<{ message: string; data: Event }>(`${API_URL_MAP.EVENTS}/${eventId}`)
-            .pipe(map(response => response.data));
+            .pipe(map(response => this._transformEvent(response.data)));
     }
 
     createEvent(payload: SaveEventPayload): Observable<string> {
@@ -154,13 +151,13 @@ export class EventService {
         );
     }
 
-    private _calculateRamainingDaysToEvent(event: Event): number {
+    private _calculateRamainingDaysToEvent(startDate: Date): number {
         const today = new Date();
         today.setHours(0, 0, 0, 0); // Set time to midnight for accurate day calculation
-        const eventDate: Date = event.startDate;
+        const eventStartDate: Date = new Date(startDate);
 
         // Calculate difference in milliseconds
-        const timeDifference = Math.abs(eventDate.getTime() - today.getTime());
+        const timeDifference = Math.abs(eventStartDate.getTime() - today.getTime());
 
         // Convert milliseconds to days
         const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
