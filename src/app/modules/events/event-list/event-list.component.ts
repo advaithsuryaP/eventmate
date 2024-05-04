@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { Subject, combineLatest, startWith, takeUntil } from 'rxjs';
+import { EMPTY, Subject, combineLatest, startWith, switchMap, takeUntil } from 'rxjs';
 import { AuthService } from '../../../auth/auth.service';
 import { DomainService } from '../../domains/domain.service';
 import { EventService } from '../event.service';
@@ -21,6 +21,8 @@ import { SNACKBAR_ACTION } from '../../../core/app.constants';
 import { UserService } from '../../users/user.service';
 import { MatSelectModule } from '@angular/material/select';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
+import { MatDialog } from '@angular/material/dialog';
+import { ConfirmDialogComponent } from '../../../core/components/confirm-dialog.component';
 
 @Component({
     selector: 'app-event-list',
@@ -47,15 +49,15 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
     styleUrl: './event-list.component.css'
 })
 export default class EventListComponent implements OnInit, OnDestroy {
-    users: User[] = [];
     events: Event[] = [];
     domains: Domain[] = [];
     currentUser!: User | null;
     registrations: Registration[] = [];
 
-    domainFilterControl = new FormControl();
+    domainFilterControl = new FormControl<string | null>(null);
 
     private _router = inject(Router);
+    private _matDialog = inject(MatDialog);
     private _snackbar = inject(MatSnackBar);
     private _authService = inject(AuthService);
     private _userService = inject(UserService);
@@ -78,16 +80,10 @@ export default class EventListComponent implements OnInit, OnDestroy {
                 }
             });
 
-        combineLatest([
-            this._userService.users$,
-            this._authService.currentUser$,
-            this._domainService.domains$,
-            this._eventService.registrations$
-        ])
+        combineLatest([this._authService.currentUser$, this._domainService.domains$, this._eventService.registrations$])
             .pipe(takeUntil(this._unsubscribeAll))
             .subscribe({
-                next: ([users, currentUser, domains, registrations]) => {
-                    this.users = users;
+                next: ([currentUser, domains, registrations]) => {
                     this.currentUser = currentUser;
                     this.domains = domains;
                     this.registrations = registrations;
@@ -103,12 +99,8 @@ export default class EventListComponent implements OnInit, OnDestroy {
         return count;
     }
 
-    getDomainNameById(domainId: string): string {
-        return this.domains.find(d => d._id === domainId)?.name ?? 'Unknown Domain';
-    }
-
-    getUsernameById(userId: string): string {
-        return this.users.find(u => u._id === userId)?.username ?? 'Unknown User';
+    getDomainName(domainId: string): string {
+        return this._domainService.getDomainById(domainId).name;
     }
 
     hasUserRegistered(eventId: string): boolean {
@@ -117,12 +109,24 @@ export default class EventListComponent implements OnInit, OnDestroy {
     }
 
     deleteEvent(eventId: string, index: number) {
-        this._eventService.deleteEvent(eventId, index).subscribe({
-            next: response => {
-                if (response) this._snackbar.open('Event deleted successfully', SNACKBAR_ACTION.SUCCESS);
-                else this._snackbar.open('Error while deleting event', SNACKBAR_ACTION.ERROR);
-            }
-        });
+        this._matDialog
+            .open(ConfirmDialogComponent, {
+                disableClose: true,
+                panelClass: 'confirm-dialog'
+            })
+            .afterClosed()
+            .pipe(
+                switchMap(result => {
+                    if (result) return this._eventService.deleteEvent(eventId, index);
+                    return EMPTY;
+                })
+            )
+            .subscribe({
+                next: response => {
+                    if (response) this._snackbar.open('Event deleted successfully', SNACKBAR_ACTION.SUCCESS);
+                    else this._snackbar.open('Error while deleting event', SNACKBAR_ACTION.ERROR);
+                }
+            });
     }
 
     registerEvent(eventId: string) {
