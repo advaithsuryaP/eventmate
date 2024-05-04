@@ -30,22 +30,6 @@ export class EventService {
         );
     }
 
-    private _transformEvent(event: Event): Event {
-        const daysLeftForEventToStart: number = this._calculateRamainingDaysToEvent(event.startDate);
-        return {
-            ...event,
-            startDate: new Date(event.startDate),
-            endDate: new Date(event.endDate),
-            eventStartsIn: daysLeftForEventToStart,
-            registrationClosesIn: daysLeftForEventToStart - 1,
-            isRegistrationClosed: daysLeftForEventToStart <= 1
-        };
-    }
-
-    getLatestEventCount(): number {
-        return this._events.length + 1;
-    }
-
     getEvent(eventId: string): Observable<Event> {
         return this._http
             .get<{ message: string; data: Event }>(`${API_URL_MAP.EVENTS}/${eventId}`)
@@ -120,20 +104,22 @@ export class EventService {
         );
     }
 
-    unRegisterEvent(
-        registrationId: string
-    ): Observable<{ message: string; data: { acknowledged: boolean; deletedCount: number } }> {
+    unRegisterEvent(registrationId: string): Observable<boolean> {
         return this._http
             .delete<{ message: string; data: { acknowledged: boolean; deletedCount: number } }>(
                 `${API_URL_MAP.REGISTRATIONS}/${registrationId}`
             )
             .pipe(
-                tap(response => {
-                    const indexToDelete = this._registrations.findIndex(r => r._id === registrationId);
-                    if (indexToDelete !== -1) {
-                        this._registrations.splice(indexToDelete, 1);
-                        this._registrationSubject.next(this._registrations.slice());
+                map(response => {
+                    if (response.data.deletedCount === 1) {
+                        const indexToDelete = this._registrations.findIndex(r => r._id === registrationId);
+                        if (indexToDelete !== -1) {
+                            this._registrations.splice(indexToDelete, 1);
+                            this._registrationSubject.next(this._registrations.slice());
+                        }
+                        return true;
                     }
+                    return false;
                 })
             );
     }
@@ -149,6 +135,24 @@ export class EventService {
                 return response.message;
             })
         );
+    }
+
+    getEventById(eventId: string): Event {
+        const event = this._events.find(e => e._id === eventId);
+        if (!event) throw new Error('Event not found');
+        return event;
+    }
+
+    private _transformEvent(event: Event): Event {
+        const daysLeftForEventToStart: number = this._calculateRamainingDaysToEvent(event.startDate);
+        return {
+            ...event,
+            startDate: new Date(event.startDate),
+            endDate: new Date(event.endDate),
+            eventStartsIn: daysLeftForEventToStart,
+            registrationClosesIn: daysLeftForEventToStart - 1,
+            isRegistrationClosed: daysLeftForEventToStart <= 1
+        };
     }
 
     private _calculateRamainingDaysToEvent(startDate: Date): number {

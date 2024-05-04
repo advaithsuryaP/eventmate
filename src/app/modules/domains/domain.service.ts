@@ -51,4 +51,10 @@ export class DomainService {
                 })
             );
     }
+
+    getDomainById(domainId: string): Domain {
+        const domain = this._domains.find(d => d._id === domainId);
+        if (!domain) throw new Error('Invalid domain');
+        return domain;
+    }
 }

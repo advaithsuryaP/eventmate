@@ -23,6 +23,11 @@ export const routes: Routes = [
                 loadChildren: () => import('./modules/events/events.routes')
             },
             {
+                path: 'registrations',
+                loadComponent: () => import('./modules/registrations/registrations.component'),
+                canActivate: [authGuard]
+            },
+            {
                 path: 'domains',
                 loadComponent: () => import('./modules/domains/domains.component'),
                 canActivate: [authGuard]

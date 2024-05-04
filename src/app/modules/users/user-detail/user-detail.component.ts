@@ -105,15 +105,12 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
 
     unRegisterForEvent(registrationId: string, index: number) {
         this._loaderService.show();
-
         this._eventService.unRegisterEvent(registrationId).subscribe({
             next: response => {
-                if (response.data.deletedCount === 1) {
-                    this._snackbar.open(response.message, SNACKBAR_ACTION.SUCCESS);
+                if (response) {
+                    this._snackbar.open('Registration cancelled successfully', SNACKBAR_ACTION.SUCCESS);
                     this.registrations.splice(index, 1);
-                } else {
-                    this._snackbar.open('Error while cancelling the registration', SNACKBAR_ACTION.ERROR);
-                }
+                } else this._snackbar.open('Error while cancelling the registration', SNACKBAR_ACTION.ERROR);
                 this._loaderService.hide();
             }
         });
@@ -165,6 +162,7 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
         });
     }
 
+    // FIX this
     getEventTitleById(eventId: string): string {
         return this.events.find(e => e._id === eventId)?.title ?? 'Unknown Event';
     }
