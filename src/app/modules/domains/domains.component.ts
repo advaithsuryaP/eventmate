@@ -18,6 +18,7 @@ import { SNACKBAR_ACTION } from '../../core/app.constants';
 import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { AuthService } from '../../auth/auth.service';
+import { LoaderService } from '../../core/services/loader.service';
 
 @Component({
     selector: 'app-domains',
@@ -40,7 +41,6 @@ import { AuthService } from '../../auth/auth.service';
 export default class DomainsComponent implements OnInit, OnDestroy {
     domains: Domain[] = [];
     currentUser: User | null = null;
-    isLoading: boolean = false;
 
     readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
@@ -48,6 +48,7 @@ export default class DomainsComponent implements OnInit, OnDestroy {
     private announcer = inject(LiveAnnouncer);
     private _authService = inject(AuthService);
     private _domainService = inject(DomainService);
+    private _loaderService = inject(LoaderService);
     private _unsubscribeAll: Subject<null> = new Subject();
 
     domainForm = new FormGroup({
@@ -80,21 +81,23 @@ export default class DomainsComponent implements OnInit, OnDestroy {
     editDomain(domainId: string) {}
 
     deleteDomain(domainId: string, index: number): void {
-        this.isLoading = true;
+        this._loaderService.show();
         this._domainService.deleteDomain(domainId, index).subscribe({
             next: response => {
+                this._loaderService.hide();
                 if (response) this._snackbar.open('Domain deleted successfully', SNACKBAR_ACTION.SUCCESS);
                 else this._snackbar.open('Error while deleting domain', SNACKBAR_ACTION.ERROR);
-                this.isLoading = false;
             }
         });
     }
 
     createDomain(): void {
         if (this.domainForm.valid) {
+            this._loaderService.show();
             const payload: CreateDomainPayload = this.domainForm.getRawValue();
             this._domainService.createDomain(payload).subscribe({
                 next: response => {
+                    this._loaderService.hide();
                     this.domainForm.reset();
                     this._snackbar.open(response, SNACKBAR_ACTION.SUCCESS);
                 }

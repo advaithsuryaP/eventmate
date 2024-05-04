@@ -20,6 +20,7 @@ import { MatTooltipModule } from '@angular/material/tooltip';
 import { UserService } from '../user.service';
 import { MatDialog } from '@angular/material/dialog';
 import { EventmateSelectionComponent } from '../eventmate-selection/eventmate-selection.component';
+import { LoaderService } from '../../../core/services/loader.service';
 
 @Component({
     standalone: true,
@@ -41,7 +42,6 @@ import { EventmateSelectionComponent } from '../eventmate-selection/eventmate-se
     templateUrl: './user-detail.component.html'
 })
 export default class UserDetailComponent implements OnInit, OnDestroy {
-    isLoading: boolean = false;
     isInterestChanged: boolean = false;
     private _selectedInterest: string = '';
 
@@ -61,11 +61,12 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
     private _userService = inject(UserService);
     private _eventService = inject(EventService);
     private _domainService = inject(DomainService);
+    private _loaderService = inject(LoaderService);
 
     private _unsubscribeAll: Subject<null> = new Subject();
 
     ngOnInit(): void {
-        this.isLoading = true;
+        this._loaderService.show();
         this._authService.currentUser$
             .pipe(
                 filter(response => response !== null),
@@ -84,7 +85,7 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
             )
             .subscribe({
                 next: ([users, events, domains, feedbacks, registrations]) => {
-                    this.isLoading = false;
+                    this._loaderService.hide();
                     this.users = users;
                     this.events = events;
                     this.domains = domains;
@@ -103,7 +104,8 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
     }
 
     unRegisterForEvent(registrationId: string, index: number) {
-        this.isLoading = true;
+        this._loaderService.show();
+
         this._eventService.unRegisterEvent(registrationId).subscribe({
             next: response => {
                 if (response.data.deletedCount === 1) {
@@ -112,7 +114,7 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
                 } else {
                     this._snackbar.open('Error while cancelling the registration', SNACKBAR_ACTION.ERROR);
                 }
-                this.isLoading = false;
+                this._loaderService.hide();
             }
         });
     }
@@ -134,18 +136,21 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
     }
 
     updateInterest(registrationId: string): void {
+        this._loaderService.show();
         const payload: UpdateRegistrationPayload = {
             registrationId: registrationId,
             interests: [this._selectedInterest]
         };
         this._eventService.updateRegistration(payload).subscribe({
             next: response => {
+                this._loaderService.hide();
                 this._snackbar.open(response, SNACKBAR_ACTION.SUCCESS);
             }
         });
     }
 
     submitFeedback(eventId: string) {
+        this._loaderService.show();
         const payload: SubmitFeedbackPayload = {
             userId: this.currentUser._id,
             eventId: eventId,
@@ -154,6 +159,7 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
         };
         this._userService.submitFeedback(payload).subscribe({
             next: response => {
+                this._loaderService.hide();
                 this._snackbar.open(response, SNACKBAR_ACTION.SUCCESS);
             }
         });
@@ -169,8 +175,10 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
             eventId: eventId,
             interests: interests
         };
+        this._loaderService.show();
         this._userService.fetchEventmateRecommendations(payload).subscribe({
             next: response => {
+                this._loaderService.hide();
                 this._matDialog
                     .open(EventmateSelectionComponent, {
                         disableClose: true,

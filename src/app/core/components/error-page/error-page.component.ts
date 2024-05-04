@@ -7,7 +7,6 @@ import { RouterLink } from '@angular/router';
     selector: 'app-error-page',
     standalone: true,
     imports: [MatButtonModule, MatIconModule, RouterLink],
-    templateUrl: './error-page.component.html',
-    styleUrl: './error-page.component.css'
+    templateUrl: './error-page.component.html'
 })
 export default class ErrorPageComponent {}

@@ -4,10 +4,12 @@ import { MatSnackBar } from '@angular/material/snack-bar';
 import { catchError, throwError } from 'rxjs';
 import { ERROR_CODE_MAP, SNACKBAR_ACTION } from '../app.constants';
 import { Router } from '@angular/router';
+import { LoaderService } from './loader.service';
 
 export const errorInterceptor: HttpInterceptorFn = (req, next) => {
-    const snackbarService = inject(MatSnackBar);
     const router = inject(Router);
+    const loaderService = inject(LoaderService);
+    const snackbarService = inject(MatSnackBar);
     return next(req).pipe(
         catchError((error: HttpErrorResponse) => {
             let errorMessage = 'An unknown error occured!';
@@ -17,6 +19,7 @@ export const errorInterceptor: HttpInterceptorFn = (req, next) => {
             } else if (error.error.message) {
                 errorMessage = error.error.message;
             }
+            loaderService.hide();
             snackbarService.open(errorMessage, SNACKBAR_ACTION.ERROR);
             return throwError(() => error);
         })

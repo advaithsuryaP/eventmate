@@ -10,6 +10,7 @@ import { AuthService } from '../auth.service';
 import { MatCheckboxModule } from '@angular/material/checkbox';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SNACKBAR_ACTION } from '../../core/app.constants';
+import { LoaderService } from '../../core/services/loader.service';
 
 @Component({
     selector: 'app-sign-up',
@@ -27,11 +28,11 @@ import { SNACKBAR_ACTION } from '../../core/app.constants';
 })
 export default class SignUpComponent {
     showPassword: boolean = false;
-    isLoading: boolean = false;
 
     private _router = inject(Router);
     private _snackbar = inject(MatSnackBar);
     private _authService = inject(AuthService);
+    private _loaderService = inject(LoaderService);
 
     signUpForm = new FormGroup({
         email: new FormControl<string>('', { nonNullable: true, validators: [Validators.required, Validators.email] }),
@@ -49,16 +50,12 @@ export default class SignUpComponent {
 
     signUp(): void {
         if (this.signUpForm.valid) {
-            this.isLoading = true;
             const payload: SignUpUserPayload = this.signUpForm.getRawValue();
             this._authService.signUpUser(payload).subscribe({
                 next: response => {
-                    this.isLoading = false;
+                    this._loaderService.hide();
                     this._snackbar.open(response, SNACKBAR_ACTION.SUCCESS);
                     this._router.navigate(['/auth']);
-                },
-                error: err => {
-                    this.isLoading = false;
                 }
             });
         }

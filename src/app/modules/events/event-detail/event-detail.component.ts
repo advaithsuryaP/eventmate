@@ -14,6 +14,7 @@ import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
 import { MatIconModule } from '@angular/material/icon';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { LoaderService } from '../../../core/services/loader.service';
 
 @Component({
     selector: 'app-event-detail',
@@ -23,7 +24,6 @@ import { MatTooltipModule } from '@angular/material/tooltip';
     styleUrl: './event-detail.component.css'
 })
 export default class EventDetailComponent implements OnInit, OnDestroy {
-    isLoading: boolean = false;
     selectedInterest: string = '';
 
     private _router = inject(Router);
@@ -32,6 +32,7 @@ export default class EventDetailComponent implements OnInit, OnDestroy {
     private _eventService = inject(EventService);
     private _snackbarService = inject(MatSnackBar);
     private _domainService = inject(DomainService);
+    private _loaderService = inject(LoaderService);
 
     event!: Event;
     domains: Domain[] = [];
@@ -39,7 +40,7 @@ export default class EventDetailComponent implements OnInit, OnDestroy {
 
     private _unsubscribeAll: Subject<null> = new Subject();
     ngOnInit(): void {
-        this.isLoading = true;
+        this._loaderService.show();
         this._route.paramMap
             .pipe(
                 switchMap(paramMap => {
@@ -54,7 +55,7 @@ export default class EventDetailComponent implements OnInit, OnDestroy {
             )
             .subscribe({
                 next: ([currentUser, domains, event]) => {
-                    this.isLoading = false;
+                    this._loaderService.hide();
                     this.event = event;
                     this.domains = domains;
                     this.currentUser = currentUser;
