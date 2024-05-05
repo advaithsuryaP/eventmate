@@ -2,6 +2,7 @@ import { Routes } from '@angular/router';
 import { authGuard } from './core/services/auth.guard';
 import { appResolver } from './core/services/app.resolver';
 import { ShellComponent } from './core/components/shell.component';
+import { usersResolver } from './modules/users/users.resolver';
 
 export const routes: Routes = [
     {
@@ -25,6 +26,7 @@ export const routes: Routes = [
             {
                 path: 'registrations',
                 loadComponent: () => import('./modules/registrations/registrations.component'),
+                resolve: { data: usersResolver },
                 canActivate: [authGuard]
             },
             {
