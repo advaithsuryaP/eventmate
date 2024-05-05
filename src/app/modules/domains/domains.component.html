@@ -11,6 +11,7 @@
                         <mat-form-field class="w-100">
                             <mat-label>Name</mat-label>
                             <input matInput formControlName="name" autocomplete="off" placeholder="Enter domain name" />
+                            <mat-error>This is a required field</mat-error>
                         </mat-form-field>
 
                         <mat-form-field class="w-100">
@@ -20,6 +21,7 @@
                                 autocomplete="off"
                                 formControlName="description"
                                 placeholder="Enter domain description"></textarea>
+                            <mat-error>This is a required field</mat-error>
                         </mat-form-field>
 
                         <mat-form-field class="w-100">
@@ -47,15 +49,18 @@
                             <mat-hint align="end">Total: {{ domainForm.value.interests?.length }}</mat-hint>
                         </mat-form-field>
 
-                        <button
-                            type="submit"
-                            color="primary"
-                            mat-raised-button
-                            (click)="createDomain()"
-                            [disabled]="domainForm.invalid">
-                            <mat-icon>domain_add</mat-icon>
-                            Create Domain
-                        </button>
+                        <div class="d-flex justify-content-between">
+                            <button
+                                type="submit"
+                                color="primary"
+                                mat-raised-button
+                                (click)="saveDomain()"
+                                [disabled]="domainForm.invalid">
+                                <mat-icon>domain_add</mat-icon>
+                                {{ editDomainId ? 'Edit' : 'Create' }} Domain
+                            </button>
+                            <button type="button" color="warn" mat-button (click)="resetForm()">RESET</button>
+                        </div>
                     </form>
                 </mat-card-content>
             </mat-card>
@@ -83,7 +88,7 @@
                             </div>
                             @if (currentUser?.isAdmin) {
                             <div class="d-flex">
-                                <button mat-icon-button color="primary">
+                                <button mat-icon-button color="primary" (click)="editDomain(domain._id, index)">
                                     <mat-icon>edit</mat-icon>
                                 </button>
                                 <button mat-icon-button color="warn" (click)="deleteDomain(domain._id, index)">

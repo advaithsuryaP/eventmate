@@ -1,9 +1,9 @@
 import { HttpClient } from '@angular/common/http';
 import { Injectable, inject } from '@angular/core';
-import { BehaviorSubject, Observable, map, tap } from 'rxjs';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 import { API_URL_MAP } from '../../core/app.constants';
 import { Domain } from '../../core/app.models';
-import { CreateDomainPayload } from '../../core/app.payload';
+import { SaveDomainPayload } from '../../core/app.payload';
 
 @Injectable({
     providedIn: 'root'
@@ -25,10 +25,21 @@ export class DomainService {
         );
     }
 
-    createDomain(payload: CreateDomainPayload): Observable<string> {
+    createDomain(payload: SaveDomainPayload): Observable<string> {
         return this._http.post<{ message: string; data: Domain }>(API_URL_MAP.DOMAINS, payload).pipe(
             map(response => {
                 this._domains.push(response.data);
+                this._domainsSubject.next(this._domains.slice());
+                return response.message;
+            })
+        );
+    }
+
+    updateDomain(domainId: string, payload: SaveDomainPayload): Observable<string> {
+        return this._http.put<{ message: string; data: Domain }>(`${API_URL_MAP.DOMAINS}/${domainId}`, payload).pipe(
+            map(response => {
+                const indexToUpdate = this._domains.findIndex(d => d._id === domainId);
+                this._domains[indexToUpdate] = response.data;
                 this._domainsSubject.next(this._domains.slice());
                 return response.message;
             })

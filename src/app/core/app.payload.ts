@@ -11,7 +11,7 @@ export interface SignInUserPayload {
     password: string;
 }
 
-export interface CreateDomainPayload {
+export interface SaveDomainPayload {
     name: string;
     description: string;
     interests: string[];

@@ -11,7 +11,7 @@ import { NgFor, UpperCasePipe } from '@angular/common';
 import { EMPTY, Subject, combineLatest, switchMap, takeUntil, tap } from 'rxjs';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DomainService } from './domain.service';
-import { CreateDomainPayload } from '../../core/app.payload';
+import { SaveDomainPayload } from '../../core/app.payload';
 import { LiveAnnouncer } from '@angular/cdk/a11y';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SNACKBAR_ACTION } from '../../core/app.constants';
@@ -43,6 +43,7 @@ import { MatDialog } from '@angular/material/dialog';
 export default class DomainsComponent implements OnInit, OnDestroy {
     domains: Domain[] = [];
     currentUser: User | null = null;
+    editDomainId: string = '';
 
     readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
@@ -81,7 +82,17 @@ export default class DomainsComponent implements OnInit, OnDestroy {
         return INDEX_JSON[index];
     }
 
-    editDomain(domainId: string) {}
+    editDomain(domainId: string, index: number) {
+        this.editDomainId = domainId;
+        const domainToEdit: Domain = this.domains[index];
+        this.domainForm.patchValue({
+            name: domainToEdit.name,
+            description: domainToEdit.description
+        });
+        const interestsControl = <FormArray>this.domainForm.controls.interests;
+        interestsControl.clear();
+        domainToEdit.interests.forEach(interest => interestsControl.push(new FormControl<string>(interest)));
+    }
 
     deleteDomain(domainId: string, index: number): void {
         this._matDialog
@@ -107,18 +118,38 @@ export default class DomainsComponent implements OnInit, OnDestroy {
                 }
             });
     }
+    resetForm() {
+        this.editDomainId = '';
+        const interestsControl = <FormArray>this.domainForm.controls.interests;
+        interestsControl.clear();
+        this.domainForm.reset();
+    }
 
-    createDomain(): void {
+    saveDomain(): void {
         if (this.domainForm.valid) {
             this._loaderService.show();
-            const payload: CreateDomainPayload = this.domainForm.getRawValue();
-            this._domainService.createDomain(payload).subscribe({
-                next: response => {
-                    this._loaderService.hide();
-                    this.domainForm.reset();
-                    this._snackbar.open(response, SNACKBAR_ACTION.SUCCESS);
-                }
-            });
+            const payload: SaveDomainPayload = this.domainForm.getRawValue();
+            if (this.editDomainId) {
+                this._domainService
+                    .updateDomain(this.editDomainId, payload)
+                    .pipe(takeUntil(this._unsubscribeAll))
+                    .subscribe({
+                        next: response => {
+                            this._loaderService.hide();
+                            this._snackbar.open(response, SNACKBAR_ACTION.SUCCESS);
+                        }
+                    });
+            } else {
+                this._domainService
+                    .createDomain(payload)
+                    .pipe(takeUntil(this._unsubscribeAll))
+                    .subscribe({
+                        next: response => {
+                            this._loaderService.hide();
+                            this._snackbar.open(response, SNACKBAR_ACTION.SUCCESS);
+                        }
+                    });
+            }
         }
     }
 
