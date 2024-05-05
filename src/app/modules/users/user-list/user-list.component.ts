@@ -16,6 +16,7 @@ import { ConfirmDialogComponent } from '../../../core/components/confirm-dialog.
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SNACKBAR_ACTION } from '../../../core/app.constants';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { LoaderService } from '../../../core/services/loader.service';
 
 @Component({
     standalone: true,
@@ -56,10 +57,11 @@ export default class UserListComponent implements OnInit, AfterViewInit, OnDestr
     dataSource!: MatTableDataSource<User>;
     private _unsubscribeAll: Subject<null> = new Subject();
 
-    private _snackbar = inject(MatSnackBar);
     private _matDialog = inject(MatDialog);
+    private _snackbar = inject(MatSnackBar);
     private _userService = inject(UserService);
     private _eventsService = inject(EventService);
+    private _loaderService = inject(LoaderService);
 
     ngOnInit(): void {
         combineLatest([this._userService.users$, this._eventsService.registrations$])
@@ -111,12 +113,16 @@ export default class UserListComponent implements OnInit, AfterViewInit, OnDestr
             .afterClosed()
             .pipe(
                 switchMap(result => {
-                    if (result) return this._userService.flagUser(userId);
+                    if (result) {
+                        this._loaderService.show();
+                        return this._userService.flagUser(userId);
+                    }
                     return EMPTY;
                 })
             )
             .subscribe({
                 next: response => {
+                    this._loaderService.hide();
                     if (response) this._snackbar.open('User flagged successfully', SNACKBAR_ACTION.SUCCESS);
                     else this._snackbar.open('Error while flagging user', SNACKBAR_ACTION.ERROR);
                 }

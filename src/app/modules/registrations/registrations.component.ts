@@ -18,6 +18,7 @@ import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
 import { MatTooltipModule } from '@angular/material/tooltip';
+import { LoaderService } from '../../core/services/loader.service';
 
 interface EventRegistrationData {
     _id: string;
@@ -62,11 +63,12 @@ export default class RegistrationsComponent implements OnInit, AfterViewInit, On
     domains: Domain[] = [];
     displayedColumns: string[] = ['#', 'updatedAt', 'username', 'eventTitle', 'domain', 'interests', 'configure'];
 
-    private _snackbar = inject(MatSnackBar);
     private _matDialog = inject(MatDialog);
+    private _snackbar = inject(MatSnackBar);
     private _userService = inject(UserService);
     private _eventsService = inject(EventService);
     private _domainService = inject(DomainService);
+    private _loaderService = inject(LoaderService);
 
     searchFilterControl = new FormControl<string>('');
 
@@ -147,12 +149,16 @@ export default class RegistrationsComponent implements OnInit, AfterViewInit, On
             .afterClosed()
             .pipe(
                 switchMap(result => {
-                    if (result) return this._eventsService.unRegisterEvent(registrationId);
+                    if (result) {
+                        this._loaderService.show();
+                        return this._eventsService.unRegisterEvent(registrationId);
+                    }
                     return EMPTY;
                 })
             )
             .subscribe({
                 next: response => {
+                    this._loaderService.hide();
                     if (response) this._snackbar.open('Registration cancelled successfully', SNACKBAR_ACTION.SUCCESS);
                     else this._snackbar.open('Error while cancelling registration', SNACKBAR_ACTION.ERROR);
                 }

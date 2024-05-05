@@ -8,7 +8,7 @@ import { MatListModule } from '@angular/material/list';
 import { MatIconModule } from '@angular/material/icon';
 import { Domain, User } from '../../core/app.models';
 import { NgFor, UpperCasePipe } from '@angular/common';
-import { Subject, combineLatest, takeUntil, tap } from 'rxjs';
+import { EMPTY, Subject, combineLatest, switchMap, takeUntil, tap } from 'rxjs';
 import { FormArray, FormControl, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 import { DomainService } from './domain.service';
 import { CreateDomainPayload } from '../../core/app.payload';
@@ -19,6 +19,8 @@ import { MatCardModule } from '@angular/material/card';
 import { MatPaginatorModule } from '@angular/material/paginator';
 import { AuthService } from '../../auth/auth.service';
 import { LoaderService } from '../../core/services/loader.service';
+import { ConfirmDialogComponent } from '../../core/components/confirm-dialog.component';
+import { MatDialog } from '@angular/material/dialog';
 
 @Component({
     selector: 'app-domains',
@@ -44,8 +46,9 @@ export default class DomainsComponent implements OnInit, OnDestroy {
 
     readonly separatorKeysCodes = [ENTER, COMMA] as const;
 
+    private _matDialog = inject(MatDialog);
     private _snackbar = inject(MatSnackBar);
-    private announcer = inject(LiveAnnouncer);
+    private _announcer = inject(LiveAnnouncer);
     private _authService = inject(AuthService);
     private _domainService = inject(DomainService);
     private _loaderService = inject(LoaderService);
@@ -81,14 +84,28 @@ export default class DomainsComponent implements OnInit, OnDestroy {
     editDomain(domainId: string) {}
 
     deleteDomain(domainId: string, index: number): void {
-        this._loaderService.show();
-        this._domainService.deleteDomain(domainId, index).subscribe({
-            next: response => {
-                this._loaderService.hide();
-                if (response) this._snackbar.open('Domain deleted successfully', SNACKBAR_ACTION.SUCCESS);
-                else this._snackbar.open('Error while deleting domain', SNACKBAR_ACTION.ERROR);
-            }
-        });
+        this._matDialog
+            .open(ConfirmDialogComponent, {
+                disableClose: true,
+                panelClass: 'confirm-dialog'
+            })
+            .afterClosed()
+            .pipe(
+                switchMap(result => {
+                    if (result) {
+                        this._loaderService.show();
+                        return this._domainService.deleteDomain(domainId, index);
+                    }
+                    return EMPTY;
+                })
+            )
+            .subscribe({
+                next: response => {
+                    this._loaderService.hide();
+                    if (response) this._snackbar.open('Domain deleted successfully', SNACKBAR_ACTION.SUCCESS);
+                    else this._snackbar.open('Error while deleting domain', SNACKBAR_ACTION.ERROR);
+                }
+            });
     }
 
     createDomain(): void {
@@ -123,7 +140,7 @@ export default class DomainsComponent implements OnInit, OnDestroy {
 
         if (index >= 0) {
             interestControl.removeAt(index);
-            this.announcer.announce(`Removed ${interest}`);
+            this._announcer.announce(`Removed ${interest}`);
         }
     }
 
