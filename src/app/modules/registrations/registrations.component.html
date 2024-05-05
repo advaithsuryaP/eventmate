@@ -2,11 +2,17 @@
     <div class="d-flex justify-content-between gap-2 mt-3">
         <mat-form-field class="w-50">
             <mat-label>Search</mat-label>
+            <mat-icon matIconPrefix color="primary">manage_search</mat-icon>
             <input
                 matInput
                 type="text"
                 [formControl]="searchFilterControl"
                 placeholder="Search by name, event, domain and interest..." />
+            @if(searchFilterControl.value) {
+            <button mat-icon-button matSuffix (click)="resetSearch()">
+                <mat-icon color="accent">clear</mat-icon>
+            </button>
+            }
         </mat-form-field>
     </div>
     <div class="mat-elevation-z8">
@@ -32,6 +38,18 @@
                 </th>
                 <td mat-cell *matCellDef="let row; let even = even" [class]="[even ? 'even-stripes' : 'odd-stripes']">
                     {{ row.updatedAt | date : 'short' }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="username">
+                <th mat-header-cell *matHeaderCellDef>
+                    <div class="d-flex align-items-center">
+                        <mat-icon color="primary">alternate_email</mat-icon>
+                        <div class="text-primary">{{ 'Username' | uppercase }}</div>
+                    </div>
+                </th>
+                <td mat-cell *matCellDef="let row; let even = even" [class]="[even ? 'even-stripes' : 'odd-stripes']">
+                    <div>{{ row.username }}</div>
                 </td>
             </ng-container>
 
@@ -61,18 +79,6 @@
                 </td>
             </ng-container>
 
-            <ng-container matColumnDef="username">
-                <th mat-header-cell *matHeaderCellDef>
-                    <div class="d-flex align-items-center">
-                        <mat-icon color="primary">alternate_email</mat-icon>
-                        <div class="text-primary">{{ 'Username' | uppercase }}</div>
-                    </div>
-                </th>
-                <td mat-cell *matCellDef="let row; let even = even" [class]="[even ? 'even-stripes' : 'odd-stripes']">
-                    <div>{{ row.username }}</div>
-                </td>
-            </ng-container>
-
             <ng-container matColumnDef="interests">
                 <th mat-header-cell *matHeaderCellDef>
                     <div class="d-flex align-items-center">
@@ -93,7 +99,12 @@
                     </div>
                 </th>
                 <td mat-cell *matCellDef="let row; let even = even" [class]="[even ? 'even-stripes' : 'odd-stripes']">
-                    <button mat-icon-button type="button" color="warn" (click)="deteleRegistration(row._id)">
+                    <button
+                        mat-icon-button
+                        type="button"
+                        color="warn"
+                        (click)="deteleRegistration(row._id)"
+                        matTooltip="Cancel Registration">
                         <mat-icon>delete_outline</mat-icon>
                     </button>
                 </td>

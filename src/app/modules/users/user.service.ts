@@ -25,6 +25,20 @@ export class UserService {
         );
     }
 
+    flagUser(userId: string): Observable<string> {
+        return this._http.post<{ message: string }>(`${API_URL_MAP.USERS}/flag-user/${userId}`, {}).pipe(
+            map(response => {
+                const indexToUpdate = this._users.findIndex(u => u._id === userId);
+                if (indexToUpdate !== -1) {
+                    const oldIsFlaggedValue: boolean = this._users[indexToUpdate].isFlagged;
+                    this._users[indexToUpdate].isFlagged = !oldIsFlaggedValue;
+                    this._userSubject.next(this._users.slice());
+                }
+                return response.message;
+            })
+        );
+    }
+
     submitFeedback(payload: SubmitFeedbackPayload): Observable<string> {
         return this._http
             .post<{ message: string; data: Feedback }>(API_URL_MAP.FEEDBACKS, payload)

@@ -41,7 +41,8 @@ export default class SignUpComponent {
             nonNullable: true,
             validators: [Validators.required, Validators.minLength(4)]
         }),
-        isAdmin: new FormControl<boolean>(false, { nonNullable: true, validators: [Validators.required] })
+        isAdmin: new FormControl<boolean>(false, { nonNullable: true, validators: [Validators.required] }),
+        isFlagged: new FormControl<boolean>(false, { nonNullable: true, validators: [Validators.required] })
     });
 
     get controls() {

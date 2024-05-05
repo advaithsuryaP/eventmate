@@ -2,6 +2,8 @@ export interface SignUpUserPayload {
     email: string;
     username: string;
     password: string;
+    isAdmin: boolean;
+    isFlagged: boolean;
 }
 
 export interface SignInUserPayload {

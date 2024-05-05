@@ -1,1 +1,125 @@
-<p>user-list works!</p>
+<div class="container">
+    <div class="d-flex justify-content-between gap-2 mt-3">
+        <mat-form-field class="w-50">
+            <mat-label>Search</mat-label>
+            <mat-icon matIconPrefix color="primary">person_search</mat-icon>
+            <input
+                matInput
+                type="text"
+                [formControl]="searchFilterControl"
+                placeholder="Search by username and email" />
+            @if(searchFilterControl.value) {
+            <button mat-icon-button matSuffix (click)="resetSearch()">
+                <mat-icon color="accent">clear</mat-icon>
+            </button>
+            }
+        </mat-form-field>
+    </div>
+    <div class="mat-elevation-z8">
+        <table mat-table [dataSource]="dataSource">
+            <ng-container matColumnDef="#">
+                <th mat-header-cell *matHeaderCellDef>
+                    <div class="fw-medium text-primary">#</div>
+                </th>
+                <td
+                    mat-cell
+                    *matCellDef="let row; let i = index; let even = even"
+                    [class]="[even ? 'even-stripes' : 'odd-stripes']">
+                    {{ i + 1 }}
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="username">
+                <th mat-header-cell *matHeaderCellDef>
+                    <div class="d-flex align-items-center">
+                        <mat-icon color="primary">person_outline</mat-icon>
+                        <div class="text-primary">{{ 'Username' | uppercase }}</div>
+                    </div>
+                </th>
+                <td mat-cell *matCellDef="let row; let even = even" [class]="[even ? 'even-stripes' : 'odd-stripes']">
+                    <div class="d-flex align-items-center">
+                        @if (row.isAdmin) {
+                        <mat-icon class="text-success">verified_user</mat-icon>
+                        }
+                        <div>{{ row.username }}</div>
+                    </div>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="email">
+                <th mat-header-cell *matHeaderCellDef>
+                    <div class="d-flex align-items-center">
+                        <mat-icon color="primary">alternate_email</mat-icon>
+                        <div class="text-primary">{{ 'Email' | uppercase }}</div>
+                    </div>
+                </th>
+                <td mat-cell *matCellDef="let row; let even = even" [class]="[even ? 'even-stripes' : 'odd-stripes']">
+                    <div>{{ row.email }}</div>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="registrationCount">
+                <th mat-header-cell *matHeaderCellDef>
+                    <div class="d-flex align-items-center">
+                        <mat-icon color="primary">functions</mat-icon>
+                        <div class="text-primary">{{ 'Registrations' | uppercase }}</div>
+                    </div>
+                </th>
+                <td mat-cell *matCellDef="let row; let even = even" [class]="[even ? 'even-stripes' : 'odd-stripes']">
+                    <div class="fw-medium ms-4">{{ getTotalUserRegistrations(row._id) | number }}</div>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="registrationReport">
+                <th mat-header-cell *matHeaderCellDef>
+                    <div class="d-flex align-items-center">
+                        <mat-icon color="primary">grading</mat-icon>
+                        <div class="text-primary">{{ 'Report' | uppercase }}</div>
+                    </div>
+                </th>
+                <td mat-cell *matCellDef="let row; let even = even" [class]="[even ? 'even-stripes' : 'odd-stripes']">
+                    <div class="ms-4 d-flex align-items-center">
+                        @if (getTotalUserRegistrations(row._id) === 0) {
+                        <mat-icon color="warn">exposure_zero</mat-icon>
+
+                        } @else if(getTotalUserRegistrations(row._id) <= 3) {
+                        <mat-icon class="text-warning">chevron_left</mat-icon>
+                        <div class="fw-medium text-warning">3</div>
+
+                        } @else if(getTotalUserRegistrations(row._id) > 3) {
+                        <mat-icon class="text-success">navigate_next</mat-icon>
+                        <div class="fw-medium text-success">3</div>
+                        }
+                    </div>
+                </td>
+            </ng-container>
+
+            <ng-container matColumnDef="configure">
+                <th mat-header-cell *matHeaderCellDef>
+                    <div class="d-flex align-items-center">
+                        <mat-icon color="primary">manage_history</mat-icon>
+                        <div class="text-primary">{{ 'Configure' | uppercase }}</div>
+                    </div>
+                </th>
+                <td mat-cell *matCellDef="let row; let even = even" [class]="[even ? 'even-stripes' : 'odd-stripes']">
+                    <button
+                        mat-icon-button
+                        type="button"
+                        color="warn"
+                        (click)="toggleFlagStatus(row._id)"
+                        [matTooltip]="row.isFlagged ? 'Unflag User' : 'Flag User'">
+                        <mat-icon> @if (row.isFlagged) { flag } @else { outlined_flag } </mat-icon>
+                    </button>
+                </td>
+            </ng-container>
+
+            <tr mat-header-row *matHeaderRowDef="displayedColumns"></tr>
+            <tr mat-row *matRowDef="let row; columns: displayedColumns"></tr>
+
+            <tr class="mat-row" *matNoDataRow>
+                <td class="mat-cell" colspan="4">No data matching the search text {{ searchFilterControl.value }}</td>
+            </tr>
+        </table>
+        <mat-paginator [pageSizeOptions]="[10, 25, 50, 100]" aria-label="Select page of registrations"></mat-paginator>
+    </div>
+</div>

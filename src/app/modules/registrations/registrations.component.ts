@@ -17,8 +17,10 @@ import { SNACKBAR_ACTION } from '../../core/app.constants';
 import { MatFormFieldModule } from '@angular/material/form-field';
 import { MatInputModule } from '@angular/material/input';
 import { MatSelectModule } from '@angular/material/select';
+import { MatTooltipModule } from '@angular/material/tooltip';
 
 interface EventRegistrationData {
+    _id: string;
     username: string;
     eventTitle: string;
     domainName: string;
@@ -37,6 +39,7 @@ interface EventRegistrationData {
         MatTableModule,
         MatButtonModule,
         MatSelectModule,
+        MatTooltipModule,
         MatPaginatorModule,
         MatFormFieldModule,
         ReactiveFormsModule
@@ -57,7 +60,7 @@ interface EventRegistrationData {
 export default class RegistrationsComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(MatPaginator) paginator!: MatPaginator;
     domains: Domain[] = [];
-    displayedColumns: string[] = ['#', 'updatedAt', 'eventTitle', 'domain', 'username', 'interests', 'configure'];
+    displayedColumns: string[] = ['#', 'updatedAt', 'username', 'eventTitle', 'domain', 'interests', 'configure'];
 
     private _snackbar = inject(MatSnackBar);
     private _matDialog = inject(MatDialog);
@@ -76,6 +79,7 @@ export default class RegistrationsComponent implements OnInit, AfterViewInit, On
                 const eventRegistrations: EventRegistrationData[] = [];
                 response.forEach(r => {
                     const eventRegistrationData: EventRegistrationData = {
+                        _id: r._id,
                         updatedAt: new Date(r.updatedAt),
                         username: this.getUsername(r.userId),
                         eventTitle: this.getEventTitle(r.eventId),
@@ -85,6 +89,12 @@ export default class RegistrationsComponent implements OnInit, AfterViewInit, On
                     eventRegistrations.push(eventRegistrationData);
                 });
                 this.dataSource = new MatTableDataSource(eventRegistrations);
+
+                // Reset pagination and filter status for further updates on registration table
+
+                const searchTerm: string = this.searchFilterControl.value!;
+                this.dataSource.filter = searchTerm.trim().toLowerCase();
+                this.dataSource.paginator = this.paginator;
             }
         });
         this._domainService.domains$.pipe(takeUntil(this._unsubscribeAll)).subscribe({
@@ -122,6 +132,10 @@ export default class RegistrationsComponent implements OnInit, AfterViewInit, On
 
     getDomainName(domainId: string): string {
         return this._domainService.getDomainById(domainId).name;
+    }
+
+    resetSearch(): void {
+        this.searchFilterControl.setValue('');
     }
 
     deteleRegistration(registrationId: string) {

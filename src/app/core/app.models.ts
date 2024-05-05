@@ -3,6 +3,7 @@ export interface User {
     email: string;
     username: string;
     isAdmin: boolean;
+    isFlagged: boolean;
     createdAt: string;
     updatedAt: string;
 }
