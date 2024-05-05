@@ -161,10 +161,10 @@ export class EventService {
         const eventStartDate: Date = new Date(startDate);
 
         // Calculate difference in milliseconds
-        const timeDifference = Math.abs(eventStartDate.getTime() - today.getTime());
+        const timeDifference = eventStartDate.getTime() - today.getTime();
 
         // Convert milliseconds to days
-        const daysDifference = Math.ceil(timeDifference / (1000 * 60 * 60 * 24));
+        const daysDifference = Math.floor(timeDifference / (1000 * 60 * 60 * 24));
 
         return daysDifference;
     }
