@@ -60,7 +60,6 @@ export default class EventListComponent implements OnInit, OnDestroy {
     private _matDialog = inject(MatDialog);
     private _snackbar = inject(MatSnackBar);
     private _authService = inject(AuthService);
-    private _userService = inject(UserService);
     private _eventService = inject(EventService);
     private _domainService = inject(DomainService);
 
