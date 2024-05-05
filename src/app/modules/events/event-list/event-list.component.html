@@ -50,14 +50,12 @@
                             <div class="mat-subtitle-2">
                                 {{ event.startDate | date : 'short' }}
                             </div>
-                            @if (event.registrationClosesIn <= 1) {
+                            @if ([1,2].includes(event.eventStartsIn)) {
                             <mat-icon
                                 color="accent"
-                                [matTooltip]="
-                                    event.registrationClosesIn === 1
-                                        ? 'Registration closes in 1 day!'
-                                        : 'Registration closes today!'
-                                ">
+                                matTooltip="Event starts in {{ event.eventStartsIn }} {{
+                                    event.eventStartsIn === 1 ? 'day' : 'days'
+                                }}">
                                 notifications_active
                             </mat-icon>
                             }
@@ -84,35 +82,9 @@
             @if (currentUser) {
             <mat-card-actions class="event-card__actions">
                 <!--
-                    Button to show if the user has already registered for the event
-                    Show this if the current user has registered for the event
+                    If the user is the creator of the event, show CTA buttons to edit and delete the event
                  -->
-                @if (hasUserRegistered(event._id)) {
-                <button mat-icon-button color="primary" matTooltip="Registered">
-                    <mat-icon>event_available</mat-icon>
-                </button>
-                }
-
-                <!--
-                    Button to register for an event
-                    Show this if the user is not registered for the event and is not the admin for the event
-                 -->
-                @if (!hasUserRegistered(event._id) && currentUser._id !== event.creatorId) {
-                <button
-                    mat-raised-button
-                    color="primary"
-                    class="d-flex align-items-center"
-                    (click)="registerEvent(event._id)">
-                    <mat-icon>app_registration</mat-icon>
-                    Register
-                </button>
-                }
-
-                <!--
-                    Buttons to edit and cancel the event
-                    Show these buttons to the admin users of the event
-                 -->
-                @if (currentUser._id === event.creatorId) {
+                @if (event.creatorId === currentUser._id) {
                 <div class="d-flex">
                     <button
                         mat-icon-button
@@ -129,7 +101,35 @@
                         <mat-icon>delete_sweep</mat-icon>
                     </button>
                 </div>
+                <!-- If the user is not the creator of the event -->
+                } @else {
+                <!-- If the user has already registered for the event -->
+                @if (hasUserRegistered(event._id)) {
+                <!-- If the event start date is in the future -->
+                @if (event.eventStartsIn > 0) {
+                <button mat-icon-button color="primary" matTooltip="Registered">
+                    <mat-icon>event_available</mat-icon>
+                </button>
+                } @else {
+                <!-- If the event start data is in the past -->
+                <button mat-button color="accent">FEEDBACK AVAILABLE</button>
                 }
+                <!-- If the user has not registed for the event -->
+                } @else {
+                <!-- If the event start date is in the future -->
+                @if(event.eventStartsIn > 0) {
+                <button
+                    mat-raised-button
+                    color="primary"
+                    class="d-flex align-items-center"
+                    (click)="registerEvent(event._id)">
+                    <mat-icon>app_registration</mat-icon>
+                    Register
+                </button>
+                <!-- If the event start date is in the past -->
+                } @else {
+                <button mat-button color="accent">EVENT COMPLETED</button>
+                } } }
             </mat-card-actions>
             }
         </mat-card>

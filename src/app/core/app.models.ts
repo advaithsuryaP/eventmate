@@ -24,8 +24,6 @@ export interface Event {
 
     // frontend paramaters
     eventStartsIn: number; // Days remaining for the event to start
-    registrationClosesIn: number; // Days remaining for the registration to close
-    isRegistrationClosed: boolean;
 }
 
 export interface Domain {

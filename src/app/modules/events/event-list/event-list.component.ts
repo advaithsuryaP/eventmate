@@ -1,10 +1,10 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { EMPTY, Subject, combineLatest, startWith, switchMap, takeUntil } from 'rxjs';
+import { EMPTY, Subject, combineLatest, startWith, switchAll, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
 import { AuthService } from '../../../auth/auth.service';
 import { DomainService } from '../../domains/domain.service';
 import { EventService } from '../event.service';
-import { Domain, Event, Registration, User } from '../../../core/app.models';
+import { Domain, Event, Feedback, Registration, User } from '../../../core/app.models';
 import { DatePipe, DecimalPipe, UpperCasePipe } from '@angular/common';
 import { MatButtonModule } from '@angular/material/button';
 import { MatCardModule } from '@angular/material/card';
@@ -18,11 +18,11 @@ import { MatListModule } from '@angular/material/list';
 import { MatTooltipModule } from '@angular/material/tooltip';
 import { MatSnackBar } from '@angular/material/snack-bar';
 import { SNACKBAR_ACTION } from '../../../core/app.constants';
-import { UserService } from '../../users/user.service';
 import { MatSelectModule } from '@angular/material/select';
 import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../core/components/confirm-dialog.component';
+import { UserService } from '../../users/user.service';
 
 @Component({
     selector: 'app-event-list',
@@ -51,6 +51,7 @@ import { ConfirmDialogComponent } from '../../../core/components/confirm-dialog.
 export default class EventListComponent implements OnInit, OnDestroy {
     events: Event[] = [];
     domains: Domain[] = [];
+    feedbacks: Feedback[] = [];
     currentUser!: User | null;
     registrations: Registration[] = [];
 
@@ -59,6 +60,7 @@ export default class EventListComponent implements OnInit, OnDestroy {
     private _router = inject(Router);
     private _matDialog = inject(MatDialog);
     private _snackbar = inject(MatSnackBar);
+    private _userService = inject(UserService);
     private _authService = inject(AuthService);
     private _eventService = inject(EventService);
     private _domainService = inject(DomainService);
@@ -88,6 +90,21 @@ export default class EventListComponent implements OnInit, OnDestroy {
                     this.registrations = registrations;
                 }
             });
+
+        this._authService.currentUser$
+            .pipe(
+                switchMap(response => {
+                    if (response) return this._userService.fetchUserFeedback(response._id);
+                    return EMPTY;
+                })
+            )
+            .subscribe({
+                next: response => {
+                    console.log(response);
+
+                    this.feedbacks = response;
+                }
+            });
     }
 
     getAttendeeCountByEventId(eventId: string): number {
@@ -105,6 +122,10 @@ export default class EventListComponent implements OnInit, OnDestroy {
     hasUserRegistered(eventId: string): boolean {
         const index = this.registrations.findIndex(r => r.eventId === eventId && r.userId === this.currentUser?._id);
         return index === -1 ? false : true;
+    }
+
+    hasUserGivenFeedback(eventId: string): boolean {
+        return false;
     }
 
     deleteEvent(eventId: string, index: number) {

@@ -1,8 +1,8 @@
 import { Injectable, inject } from '@angular/core';
 import { API_URL_MAP } from '../../core/app.constants';
-import { Event, Registration } from '../../core/app.models';
-import { HttpClient, HttpParams } from '@angular/common/http';
-import { BehaviorSubject, Observable, map, tap } from 'rxjs';
+import { Event, Feedback, Registration } from '../../core/app.models';
+import { HttpClient } from '@angular/common/http';
+import { BehaviorSubject, Observable, map } from 'rxjs';
 import { SaveEventPayload, RegisterEventPayload, UpdateRegistrationPayload } from '../../core/app.payload';
 
 @Injectable({
@@ -84,13 +84,9 @@ export class EventService {
         );
     }
 
-    fetchEventRegistrations(eventId: string): Observable<Registration[]> {
-        let httpParams = new HttpParams();
-        httpParams = httpParams.append('eventId', eventId);
+    fetchEventFeedbacks(eventId: string): Observable<Feedback[]> {
         return this._http
-            .get<{ message: string; data: Registration[] }>(API_URL_MAP.REGISTRATIONS, {
-                params: httpParams
-            })
+            .get<{ message: string; data: Feedback[] }>(`${API_URL_MAP.GET_EVENT_FEEDBACK}/${eventId}`)
             .pipe(map(response => response.data));
     }
 
@@ -149,9 +145,7 @@ export class EventService {
             ...event,
             startDate: new Date(event.startDate),
             endDate: new Date(event.endDate),
-            eventStartsIn: daysLeftForEventToStart,
-            registrationClosesIn: daysLeftForEventToStart - 1,
-            isRegistrationClosed: daysLeftForEventToStart <= 1
+            eventStartsIn: daysLeftForEventToStart
         };
     }
 

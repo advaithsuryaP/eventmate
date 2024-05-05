@@ -45,7 +45,7 @@ export class UserService {
             .pipe(map(response => response.message));
     }
 
-    fetchUserRegistrations$(userId: string): Observable<Registration[]> {
+    fetchUserRegistrations(userId: string): Observable<Registration[]> {
         let httpParams = new HttpParams();
         httpParams = httpParams.append('userId', userId);
         return this._http
@@ -55,11 +55,9 @@ export class UserService {
             .pipe(map(response => response.data));
     }
 
-    fetchUserFeedback$(userId: string): Observable<Feedback[]> {
-        let httpParams = new HttpParams();
-        httpParams = httpParams.append('userId', userId);
+    fetchUserFeedback(userId: string): Observable<Feedback[]> {
         return this._http
-            .get<{ message: string; data: Feedback[] }>(API_URL_MAP.GET_USER_FEEDBACK, { params: httpParams })
+            .get<{ message: string; data: Feedback[] }>(`${API_URL_MAP.GET_USER_FEEDBACK}/${userId}`)
             .pipe(map(response => response.data));
     }
 
