@@ -151,7 +151,7 @@ export default class RegistrationsComponent implements OnInit, AfterViewInit, On
                 switchMap(result => {
                     if (result) {
                         this._loaderService.show();
-                        return this._eventsService.unRegisterEvent(registrationId);
+                        return this._eventsService.cancelRegistration(registrationId);
                     }
                     return EMPTY;
                 })

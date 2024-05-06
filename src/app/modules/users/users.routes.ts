@@ -6,11 +6,11 @@ export default [
     {
         path: '',
         component: UsersComponent,
+        resolve: { data: usersResolver },
         children: [
             {
                 path: '',
-                loadComponent: () => import('./user-list/user-list.component'),
-                resolve: { data: usersResolver }
+                loadComponent: () => import('./user-list/user-list.component')
             },
             {
                 path: ':userId',

@@ -100,7 +100,7 @@ export class EventService {
         );
     }
 
-    unRegisterEvent(registrationId: string): Observable<boolean> {
+    cancelRegistration(registrationId: string): Observable<boolean> {
         return this._http
             .delete<{ message: string; data: { acknowledged: boolean; deletedCount: number } }>(
                 `${API_URL_MAP.REGISTRATIONS}/${registrationId}`

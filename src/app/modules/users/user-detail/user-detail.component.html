@@ -8,21 +8,17 @@
                     <mat-card-subtitle class="text-primary mat-headline-6">PROFILE INFORMATION</mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
-                    <div class="d-flex flex-column w-50">
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="mat-subtitle-2">Username:</div>
-                            <div class="mat-body-2">{{ currentUser.username }}</div>
-                        </div>
-                        <div class="d-flex align-items-center gap-2">
-                            <div class="mat-subtitle-2">Email:</div>
-                            <div class="mat-body-2">{{ currentUser.email }}</div>
-                        </div>
-                        <div class="d-flex align-items-center gap-1">
-                            <div class="mat-subtitle-2">Is Admin:</div>
-                            <mat-icon [class]="[currentUser.isAdmin ? 'text-success' : 'text-danger']">{{
-                                currentUser.isAdmin ? 'check_box' : 'disabled_by_default'
-                            }}</mat-icon>
-                        </div>
+                    <div class="d-flex flex-column w-75">
+                        <label for="username" class="mat-subtitle-2 text-primary">USERNAME</label>
+                        <input
+                            class="form-control"
+                            id="username"
+                            type="text"
+                            [(ngModel)]="currentUser.username"
+                            disabled />
+                        <div class="my-1"></div>
+                        <label for="email" class="mat-subtitle-2 text-primary">EMAIL</label>
+                        <input type="text" id="email" class="form-control" [(ngModel)]="currentUser.email" disabled />
                     </div>
                 </mat-card-content>
                 <!-- <mat-card-actions align="end">
@@ -32,19 +28,53 @@
 
             <mat-card>
                 <mat-card-header>
-                    <mat-card-subtitle class="text-primary mat-headline-6">FEEDBACKS</mat-card-subtitle>
+                    <mat-card-subtitle class="text-primary mat-headline-6">COMPLETED EVENTS</mat-card-subtitle>
                 </mat-card-header>
                 <mat-card-content>
-                    @if (feedbacks.length > 0) { @for (feedback of feedbacks; track $index) {
-                    <div class="row">
-                        <div class="col-md-4">{{ getEventTitleById(feedback.eventId) | titlecase }}</div>
-                    </div>
-                    } } @else {
-                    <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
-                        <mat-icon>error</mat-icon>
-                        <div class="mat-body-2">No feedbacks yet!</div>
-                    </div>
-                    }
+                    <ul class="list-group">
+                        @for (completedEvent of completedEvents; track $index) {
+                        <li class="list-group-item d-flex flex-column">
+                            <div class="mat-subtitle-2 text-primary">{{ completedEvent.title | uppercase }}</div>
+                            <div class="d-flex flex-column gap-2 p-2">
+                                @if (hasUserGivenFeedback(completedEvent._id)) {
+                                <div class="d-flex align-items-center">
+                                    <mat-icon color="primary">{{
+                                        getEventRatingIcon(getUserFeedback(completedEvent._id)!.rating)
+                                    }}</mat-icon>
+                                    <mat-icon color="primary">grade</mat-icon>
+                                </div>
+                                <div class="d-flex align-items-center">
+                                    <mat-icon color="primary">event_note</mat-icon>
+                                    <div class="mat-body-2 fw-medium">
+                                        {{
+                                            getUserFeedback(completedEvent._id)!.comment
+                                                ? getUserFeedback(completedEvent._id)!.comment
+                                                : 'No comment provided'
+                                        }}
+                                    </div>
+                                </div>
+                                } @else {
+                                <div class="d-flex">
+                                    <button
+                                        mat-raised-button
+                                        type="button"
+                                        color="accent"
+                                        class="d-flex align-items-center"
+                                        (click)="openFeedbackDialog(completedEvent)">
+                                        <mat-icon>edit_note</mat-icon>
+                                        Add Feedback
+                                    </button>
+                                </div>
+                                }
+                            </div>
+                        </li>
+                        } @empty {
+                        <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+                            <mat-icon>error</mat-icon>
+                            <div class="mat-body-2">No completed events yet!</div>
+                        </div>
+                        }
+                    </ul>
                 </mat-card-content>
             </mat-card>
         </div>
@@ -56,20 +86,25 @@
                 <mat-card-subtitle class="text-primary mat-headline-6">REGISTRATIONS</mat-card-subtitle>
             </mat-card-header>
             <mat-card-content class="my-2">
-                @if(registrations.length > 0) {
                 <mat-accordion>
                     @for (registration of registrations; track registration._id; let index = $index) {
-                    @if(getEventById(registration.eventId); as event) {
+                    @if(getEvent(registration.eventId); as event) {
                     <mat-expansion-panel (opened)="openPanelEvent()" hideToggle>
                         <mat-expansion-panel-header>
                             <mat-panel-title>{{ index + 1 }}. {{ event.title | uppercase }}</mat-panel-title>
                             <mat-panel-description class="d-flex flex-grow-1 justify-content-end">
                                 <mat-icon
-                                    [class]="event.isRegistrationClosed ? 'text-success' : 'text-primary'"
+                                    [class]="isRegistrationOpen(event.eventStartsIn) ? 'text-primary' : 'text-success'"
                                     [matTooltip]="
-                                        event.isRegistrationClosed ? 'Event Mates Available' : 'Registration Open'
+                                        isRegistrationOpen(event.eventStartsIn)
+                                            ? 'Registration Open'
+                                            : 'Event Mates Available'
                                     ">
-                                    {{ event.isRegistrationClosed ? 'published_with_changes' : 'event_available' }}
+                                    {{
+                                        isRegistrationOpen(event.eventStartsIn)
+                                            ? 'event_available'
+                                            : 'published_with_changes'
+                                    }}
                                 </mat-icon>
                             </mat-panel-description>
                         </mat-expansion-panel-header>
@@ -98,13 +133,13 @@
                             <div class="d-flex align-items-center gap-2">
                                 <mat-icon color="primary">interests</mat-icon>
                                 <mat-chip-listbox (change)="onChangeInterest($event)">
-                                    @if (getDomainById(registration.domainId); as domain) { @for (interest of
+                                    @if (getDomain(registration.domainId); as domain) { @for (interest of
                                     domain.interests; track $index) {
 
                                     <mat-chip-option
                                         color="primary"
                                         [value]="interest"
-                                        [selectable]="!event.isRegistrationClosed"
+                                        [selectable]="isRegistrationOpen(event.eventStartsIn)"
                                         [selected]="registration.interests.includes(interest)">
                                         {{ interest }}
                                     </mat-chip-option>
@@ -116,10 +151,10 @@
                             <button
                                 mat-raised-button
                                 color="accent"
-                                (click)="unRegisterForEvent(registration._id, index)">
+                                (click)="cancelRegistration(registration._id, index)">
                                 Cancel
                             </button>
-                            @if (!event.isRegistrationClosed) {
+                            @if (isRegistrationOpen(event.eventStartsIn)) {
                             <button
                                 mat-raised-button
                                 color="primary"
@@ -127,27 +162,26 @@
                                 [disabled]="!isInterestChanged">
                                 Update
                             </button>
-                            } @if (event.isRegistrationClosed) {
+                            } @else {
                             <button
                                 mat-raised-button
                                 color="primary"
-                                (click)="getRecommendations(registration.eventId, registration.interests)">
-                                Get Recommended Connections
+                                (click)="getEventmates(registration.eventId, registration.interests)">
+                                Show Eventmates
                             </button>
                             }
                         </mat-action-row>
                     </mat-expansion-panel>
-                    } }
-                </mat-accordion>
-                } @else {
-                <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
-                    <mat-icon>error</mat-icon>
-                    <div class="mat-body-2">
-                        No registrations yet! Please <a class="alert-link" [routerLink]="['/events']">click here</a> to
-                        view all events.
+                    } } @empty {
+                    <div class="alert alert-warning d-flex align-items-center gap-2" role="alert">
+                        <mat-icon>error</mat-icon>
+                        <div class="mat-body-2">
+                            No registrations yet! Please
+                            <a class="alert-link" [routerLink]="['/events']">click here</a> to view all events.
+                        </div>
                     </div>
-                </div>
-                }
+                    }
+                </mat-accordion>
             </mat-card-content>
         </mat-card>
     </div>

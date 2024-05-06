@@ -11,7 +11,7 @@ export const API_URL_MAP = {
     SIGNUP_USER: `${environment.API_URL}/users/signup`,
     REGISTRATIONS: `${environment.API_URL}/registrations`,
     UPDATE_REGISTRATION: `${environment.API_URL}/registrations/update-registration`,
-    GET_EVENTMATES_RECOMMENDATIONS: `${environment.API_URL}/registrations/get-eventmate-recommendations`
+    GET_EVENTMATES: `${environment.API_URL}/registrations/get-eventmates`
 };
 
 export const SNACKBAR_ACTION = {

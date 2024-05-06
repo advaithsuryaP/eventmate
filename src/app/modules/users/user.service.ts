@@ -61,9 +61,9 @@ export class UserService {
             .pipe(map(response => response.data));
     }
 
-    fetchEventmateRecommendations(payload: GetEventMatesPayload): Observable<Registration[]> {
+    fetchEventmates(payload: GetEventMatesPayload): Observable<Registration[]> {
         return this._http
-            .post<{ message: string; data: Registration[] }>(`${API_URL_MAP.GET_EVENTMATES_RECOMMENDATIONS}`, payload)
+            .post<{ message: string; data: Registration[] }>(`${API_URL_MAP.GET_EVENTMATES}`, payload)
             .pipe(map(response => response.data));
     }
 

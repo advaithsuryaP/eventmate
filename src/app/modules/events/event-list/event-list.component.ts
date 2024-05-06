@@ -1,6 +1,6 @@
 import { Component, OnDestroy, OnInit, inject } from '@angular/core';
 import { Router, RouterLink } from '@angular/router';
-import { EMPTY, Subject, combineLatest, startWith, switchAll, switchMap, takeUntil, tap, withLatestFrom } from 'rxjs';
+import { EMPTY, Subject, combineLatest, startWith, switchMap, takeUntil } from 'rxjs';
 import { AuthService } from '../../../auth/auth.service';
 import { DomainService } from '../../domains/domain.service';
 import { EventService } from '../event.service';
@@ -23,6 +23,7 @@ import { FormControl, ReactiveFormsModule } from '@angular/forms';
 import { MatDialog } from '@angular/material/dialog';
 import { ConfirmDialogComponent } from '../../../core/components/confirm-dialog.component';
 import { UserService } from '../../users/user.service';
+import { LoaderService } from '../../../core/services/loader.service';
 
 @Component({
     selector: 'app-event-list',
@@ -64,6 +65,7 @@ export default class EventListComponent implements OnInit, OnDestroy {
     private _authService = inject(AuthService);
     private _eventService = inject(EventService);
     private _domainService = inject(DomainService);
+    private _loaderService = inject(LoaderService);
 
     private _unsubscribeAll: Subject<null> = new Subject();
 
@@ -125,7 +127,9 @@ export default class EventListComponent implements OnInit, OnDestroy {
     }
 
     hasUserGivenFeedback(eventId: string): boolean {
-        return false;
+        const isFeedbackPresentForEvent: Feedback | undefined = this.feedbacks.find(f => f.eventId === eventId);
+        if (isFeedbackPresentForEvent) return true;
+        else return false;
     }
 
     deleteEvent(eventId: string, index: number) {
@@ -137,12 +141,16 @@ export default class EventListComponent implements OnInit, OnDestroy {
             .afterClosed()
             .pipe(
                 switchMap(result => {
-                    if (result) return this._eventService.deleteEvent(eventId, index);
+                    if (result) {
+                        this._loaderService.show();
+                        return this._eventService.deleteEvent(eventId, index);
+                    }
                     return EMPTY;
                 })
             )
             .subscribe({
                 next: response => {
+                    this._loaderService.show();
                     if (response) this._snackbar.open('Event deleted successfully', SNACKBAR_ACTION.SUCCESS);
                     else this._snackbar.open('Error while deleting event', SNACKBAR_ACTION.ERROR);
                 }

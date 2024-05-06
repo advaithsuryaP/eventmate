@@ -112,8 +112,12 @@
                 </button>
                 } @else {
                 <!-- If the event start data is in the past -->
+                @if (hasUserGivenFeedback(event._id)) {
+                <button mat-button color="primary">EVENT COMPLETED</button>
+
+                } @else {
                 <button mat-button color="accent">FEEDBACK AVAILABLE</button>
-                }
+                } }
                 <!-- If the user has not registed for the event -->
                 } @else {
                 <!-- If the event start date is in the future -->
@@ -128,7 +132,7 @@
                 </button>
                 <!-- If the event start date is in the past -->
                 } @else {
-                <button mat-button color="accent">EVENT COMPLETED</button>
+                <button mat-button color="primary">EVENT COMPLETED</button>
                 } } }
             </mat-card-actions>
             }
