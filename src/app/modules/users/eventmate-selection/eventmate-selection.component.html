@@ -1,8 +1,22 @@
-<div mat-dialog-title class="text-primary">{{ data.isConfirmed ? 'Eventmates' : 'Select Eventmates' }}</div>
+<div mat-dialog-title class="text-primary">Chose Eventmates</div>
 <mat-dialog-content>
+    @if (data.allowEdit) {
+    <div class="d-flex align-items-center gap-2 alert alert-primary mb-0">
+        <mat-icon color="primary">info</mat-icon>
+        <div class="mat-subtitle-2">Chose the people you want to send a event mate notification.</div>
+    </div>
+    } @else {
+    <div class="d-flex align-items-center gap-2 alert alert-danger mb-0">
+        <mat-icon color="warn">warning</mat-icon>
+        <div class="mat-subtitle-2">Event mates cannot be changed on the date of the event.</div>
+    </div>
+    }
     <mat-selection-list #eventmateSelection>
-        @for (registration of data.eventmates; track registration._id) {
-        <mat-list-option color="primary" [value]="registration.userId">
+        @for (registration of data.registrations; track registration._id) {
+        <mat-list-option
+            color="primary"
+            [value]="registration.userId"
+            [selected]="isUserEventmate(registration.userId)">
             <p matListItemTitle>
                 {{ getUsername(registration.userId) | titlecase }}
             </p>
@@ -17,7 +31,11 @@
 </mat-dialog-content>
 <mat-dialog-actions align="end">
     <button mat-button color="accent" mat-dialog-close>CANCEL</button>
-    <button mat-raised-button color="primary" (click)="confirmEventmates(eventmateSelection.selectedOptions.selected)">
+    <button
+        color="primary"
+        mat-raised-button
+        [disabled]="!data.allowEdit"
+        (click)="confirmEventmates(eventmateSelection.selectedOptions.selected)">
         CONFIRM
     </button>
 </mat-dialog-actions>

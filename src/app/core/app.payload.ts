@@ -50,6 +50,6 @@ export interface SubmitFeedbackPayload {
 }
 
 export interface UpdateRegistrationPayload {
-    registrationId: string;
-    interests: string[];
+    interests?: string[];
+    eventMates?: string[];
 }

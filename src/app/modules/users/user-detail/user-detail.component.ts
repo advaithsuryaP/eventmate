@@ -85,7 +85,7 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
                         userRegistrations.forEach(ur => {
                             const eventId = ur.eventId;
                             const event = events.find(e => e._id === eventId);
-                            if (event && event.eventStartsIn < 1) this.completedEvents.push(event);
+                            if (event && event.eventStartsIn < 0) this.completedEvents.push(event);
                         });
                         this.events = events;
                         return userRegistrations;
@@ -205,10 +205,9 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
     updateInterest(registrationId: string): void {
         this._loaderService.show();
         const payload: UpdateRegistrationPayload = {
-            registrationId: registrationId,
             interests: [this._selectedInterest]
         };
-        this._eventService.updateRegistration(payload).subscribe({
+        this._eventService.updateRegistration(registrationId, payload).subscribe({
             next: response => {
                 this._loaderService.hide();
                 this._snackbar.open(response, SNACKBAR_ACTION.SUCCESS);
@@ -241,34 +240,40 @@ export default class UserDetailComponent implements OnInit, OnDestroy {
         return this._eventService.getEventById(eventId).title;
     }
 
-    getEventmates(eventId: string, interests: string[]): void {
+    getEventmates(registration: Registration, eventStartsIn: number): void {
         const payload: GetEventMatesPayload = {
             userId: this.currentUser._id,
-            eventId: eventId,
-            interests: interests
+            eventId: registration.eventId,
+            interests: registration.interests
         };
         this._loaderService.show();
-        this._userService.fetchEventmates(payload).subscribe({
-            next: response => {
-                this._loaderService.hide();
-                this._matDialog
-                    .open(EventmateSelectionComponent, {
-                        disableClose: true,
-                        autoFocus: 'dialog',
-                        width: '30%',
-                        data: {
-                            isConfirmed: false,
-                            eventmates: response
-                        }
-                    })
-                    .afterClosed()
-                    .subscribe({
-                        next: response => {
-                            console.log(response);
-                        }
-                    });
-            }
-        });
+        this._userService
+            .fetchEventmates(payload)
+            .pipe(
+                switchMap(response => {
+                    this._loaderService.hide();
+                    return this._matDialog
+                        .open(EventmateSelectionComponent, {
+                            disableClose: true,
+                            autoFocus: 'dialog',
+                            width: '30%',
+                            data: {
+                                registrations: response,
+                                registrationId: registration._id,
+                                selectedEventMates: registration.eventMates,
+                                allowEdit: eventStartsIn === 0 ? false : true
+                            }
+                        })
+                        .afterClosed();
+                })
+            )
+            .subscribe({
+                next: response => {
+                    if (Array.isArray(response)) {
+                        registration.eventMates = response;
+                    }
+                }
+            });
     }
 
     ngOnDestroy(): void {

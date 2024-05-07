@@ -106,7 +106,7 @@
                 <!-- If the user has already registered for the event -->
                 @if (hasUserRegistered(event._id)) {
                 <!-- If the event start date is in the future -->
-                @if (event.eventStartsIn > 0) {
+                @if (event.eventStartsIn >= 0) {
                 <button mat-icon-button color="primary" matTooltip="Registered">
                     <mat-icon>event_available</mat-icon>
                 </button>
@@ -121,7 +121,7 @@
                 <!-- If the user has not registed for the event -->
                 } @else {
                 <!-- If the event start date is in the future -->
-                @if(event.eventStartsIn > 0) {
+                @if(event.eventStartsIn >= 0) {
                 <button
                     mat-raised-button
                     color="primary"

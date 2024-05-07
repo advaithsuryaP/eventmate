@@ -50,7 +50,7 @@ export class EventService {
         return this._http.put<{ message: string; data: Event }>(`${API_URL_MAP.EVENTS}/${eventId}`, payload).pipe(
             map(response => {
                 const indexToUpdate = this._events.findIndex(e => e._id == eventId);
-                this._events[indexToUpdate] = response.data;
+                this._events[indexToUpdate] = this._transformEvent(response.data);
                 this._eventsSubject.next(this._events.slice());
                 return response.message;
             })
@@ -120,17 +120,19 @@ export class EventService {
             );
     }
 
-    updateRegistration(payload: UpdateRegistrationPayload) {
-        return this._http.put<{ message: string; data: Registration }>(API_URL_MAP.UPDATE_REGISTRATION, payload).pipe(
-            map(response => {
-                const indexToUpdate: number = this._registrations.findIndex(r => r._id === payload.registrationId);
-                if (indexToUpdate !== -1) {
-                    this._registrations[indexToUpdate] = response.data;
-                    this._registrationSubject.next(this._registrations.slice());
-                }
-                return response.message;
-            })
-        );
+    updateRegistration(registrationId: string, payload: UpdateRegistrationPayload) {
+        return this._http
+            .put<{ message: string; data: Registration }>(`${API_URL_MAP.REGISTRATIONS}/${registrationId}`, payload)
+            .pipe(
+                map(response => {
+                    const indexToUpdate: number = this._registrations.findIndex(r => r._id === registrationId);
+                    if (indexToUpdate !== -1) {
+                        this._registrations[indexToUpdate] = response.data;
+                        this._registrationSubject.next(this._registrations.slice());
+                    }
+                    return response.message;
+                })
+            );
     }
 
     getEventById(eventId: string): Event {

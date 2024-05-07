@@ -43,6 +43,7 @@ export interface Registration {
     interests: string[];
     createdAt: string;
     updatedAt: string;
+    eventMates: string[];
 }
 
 export interface Feedback {

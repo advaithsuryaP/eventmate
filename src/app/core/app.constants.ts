@@ -10,7 +10,6 @@ export const API_URL_MAP = {
     SIGNIN_USER: `${environment.API_URL}/users/signin`,
     SIGNUP_USER: `${environment.API_URL}/users/signup`,
     REGISTRATIONS: `${environment.API_URL}/registrations`,
-    UPDATE_REGISTRATION: `${environment.API_URL}/registrations/update-registration`,
     GET_EVENTMATES: `${environment.API_URL}/registrations/get-eventmates`
 };
 
