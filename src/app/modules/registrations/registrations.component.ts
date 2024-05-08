@@ -61,6 +61,7 @@ interface EventRegistrationData {
 export default class RegistrationsComponent implements OnInit, AfterViewInit, OnDestroy {
     @ViewChild(MatPaginator) paginator!: MatPaginator;
     domains: Domain[] = [];
+
     displayedColumns: string[] = ['#', 'updatedAt', 'username', 'eventTitle', 'domain', 'interests', 'configure'];
 
     private _matDialog = inject(MatDialog);
@@ -134,6 +135,13 @@ export default class RegistrationsComponent implements OnInit, AfterViewInit, On
 
     getDomainName(domainId: string): string {
         return this._domainService.getDomainById(domainId).name;
+    }
+
+    getRowIndex(row_index: number): number {
+        const pageNumber = this.paginator?.pageIndex ? this.paginator.pageIndex : 0;
+        const rowsPerPage = this.paginator?.pageSize ? this.paginator.pageSize : 10;
+        const base_index = pageNumber * rowsPerPage;
+        return base_index + row_index + 1;
     }
 
     resetSearch(): void {

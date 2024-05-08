@@ -25,7 +25,7 @@
                     mat-cell
                     *matCellDef="let row; let i = index; let even = even"
                     [class]="[even ? 'even-stripes' : 'odd-stripes']">
-                    {{ i + 1 }}
+                    {{ getRowIndex(i) }}
                 </td>
             </ng-container>
 

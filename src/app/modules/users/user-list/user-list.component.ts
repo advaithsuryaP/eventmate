@@ -104,6 +104,13 @@ export default class UserListComponent implements OnInit, AfterViewInit, OnDestr
         return this.registrations.filter(r => r.userId === userId).length;
     }
 
+    getRowIndex(row_index: number): number {
+        const pageNumber = this.paginator?.pageIndex ? this.paginator.pageIndex : 0;
+        const rowsPerPage = this.paginator?.pageSize ? this.paginator.pageSize : 10;
+        const base_index = pageNumber * rowsPerPage;
+        return base_index + row_index + 1;
+    }
+
     toggleFlagStatus(userId: string): void {
         this._matDialog
             .open(ConfirmDialogComponent, {
